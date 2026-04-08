@@ -1,50 +1,195 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title="MAKINEND | Yapım aşamasında"
+			description="Yakında burada olacağız. O zamana kadar iletişim bilgilerimizden bize ulaşabilirsiniz."
+			image="/logo.png"
+		/>
 	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
+	<body class="construction-page">
+		<div class="split">
+			<div class="panel-left">
+				<main class="construction">
+					<img src="/logo.png" alt="MAKINEND logosu" class="logo" />
+					<h1>Yakında burada olacağız.</h1>
+					<p class="description">
+						O zamana kadar bize aşağıdan ulaşabilirsiniz.
+					</p>
+					<div class="contact-block">
+						<a href="mailto:info@makinend.com" class="contact-link">info@makinend.com</a>
+						<p class="address">
+							Hacı Halil Mah. 1207 Sok. No:1/5 Match Office<br />
+							Gebze, Kocaeli
+						</p>
+						<a href="tel:+905306148241" class="phone-link">+90 530 614 82 41</a>
+					</div>
+				</main>
+			</div>
+			<div class="panel-right" aria-hidden="true">
+				<img
+					src="/right-image.jpg"
+					alt=""
+					class="right-image"
+					loading="eager"
+					decoding="async"
+				/>
+			</div>
+		</div>
 	</body>
 </html>
+
+<style>
+	:global(body.construction-page) {
+		position: relative;
+		margin: 0;
+		min-height: 100vh;
+		overflow-x: hidden;
+		background: #ffffff;
+		color: #767676;
+	}
+
+	.split {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		min-height: 100vh;
+		width: 100%;
+	}
+
+	.panel-left {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem clamp(1rem, 4vw, 3rem);
+		text-align: center;
+	}
+
+	.panel-right {
+		position: relative;
+		min-height: 100vh;
+		background: #e8e8e6;
+	}
+
+	.right-image {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+	}
+
+	.construction {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+		max-width: min(52rem, 100%);
+		padding: 0;
+	}
+
+	.logo {
+		display: block;
+		width: clamp(400px, 100%, 820px);
+		max-width: 100%;
+		margin: 0 auto 1.1rem;
+		border-radius: 0;
+	}
+
+	h1 {
+		margin: 0 0 0.65rem;
+		font-size: clamp(0.9rem, 2.8vw + 0.55rem, 3.25rem);
+		line-height: 1.04;
+		font-weight: 500;
+		color: #6e6e6e;
+		letter-spacing: -0.02em;
+		white-space: nowrap;
+	}
+
+	.description {
+		margin: 0 auto 1.2rem;
+		max-width: 60ch;
+		color: #8a8a8a;
+		font-size: 1.18rem;
+		line-height: 1.45;
+	}
+
+	.contact-block {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.55rem;
+		margin-top: 0.1rem;
+	}
+
+	.address {
+		margin: 0;
+		max-width: 48ch;
+		font-size: 0.95rem;
+		line-height: 1.5;
+		color: #9a9a9a;
+	}
+
+	.phone-link {
+		font-size: 0.97rem;
+		font-weight: 600;
+		color: #7c7c7c;
+		text-decoration: none;
+		border-bottom: 1px solid rgba(120, 120, 120, 0.35);
+		padding-bottom: 0.15rem;
+		transition: border-color 150ms ease, color 150ms ease;
+	}
+
+	.phone-link:hover {
+		border-color: #c97f3c;
+		color: #5a5a5a;
+	}
+
+	.contact-link {
+		display: inline-block;
+		padding: 0.25rem 0;
+		border-bottom: 1px solid rgba(120, 120, 120, 0.35);
+		color: #7c7c7c;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 1rem;
+		transition: border-color 150ms ease, color 150ms ease;
+	}
+
+	.contact-link:hover {
+		border-color: #c97f3c;
+		color: #5a5a5a;
+	}
+
+	@media (max-width: 900px) {
+		.split {
+			grid-template-columns: 1fr;
+		}
+
+		.panel-right {
+			order: -1;
+			min-height: min(42vh, 420px);
+			height: min(42vh, 420px);
+		}
+
+		.panel-left {
+			padding: 1.75rem 1.25rem 2.5rem;
+		}
+
+		.logo {
+			width: min(98vw, 580px);
+			margin-bottom: 0.75rem;
+		}
+
+		.description {
+			font-size: 1.02rem;
+		}
+
+		h1 {
+			font-size: clamp(0.82rem, 4.4vw + 0.3rem, 3.25rem);
+		}
+	}
+</style>
