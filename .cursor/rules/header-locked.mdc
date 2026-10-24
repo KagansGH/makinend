@@ -1,0 +1,13 @@
+---
+description: Header is locked. Do not change it unless the user explicitly asks.
+alwaysApply: true
+---
+
+# Header kilitli
+
+`src/components/Header.astro` ve ona bağlı header chrome’u (üst satır, menü şeridi, Teklif Al, arama, dil, logo, sticky davranış) **onaylı ve sabittir**.
+
+- Kullanıcı açıkça “header’ı değiştir / şunu düzelt” demedikçe Header’a, header stillerine ve `site.ts` içindeki `mainNav` / `languages` yapısına dokunma.
+- Başka bir sayfa veya bileşen işlerken header’ı “düzeltme”, hizalama veya görsel tutarlılık bahanesiyle değiştirme.
+- Mega menü içeriği ürün data’sından okunur; ürün ağacını header yüzünden yeniden kurgulama.
+- Şüphe varsa header’ı olduğu gibi bırak, sor.

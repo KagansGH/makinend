@@ -1,195 +1,226 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PlaceholderMedia from "../components/PlaceholderMedia.astro";
+import { categoryHref, getCategory } from "../data/products";
+
+/* Hero altındaki kart şeridi. Şablonun şeridi 3 kolondur: iki içerik kartı
+   ve sağda koyu panel. Kartlar bu yüzden ikiyle sınırlı. */
+const featuredSlugs = ["tasiyici-sistemler", "roll-form-ve-mekik-arabasi"];
+
+const featured = featuredSlugs
+	.map((slug) => getCategory(slug))
+	.filter((category): category is NonNullable<typeof category> => Boolean(category));
 ---
 
-<!doctype html>
-<html lang="tr">
-	<head>
-		<BaseHead
-			title="MAKINEND | Yapım aşamasında"
-			description="Yakında burada olacağız. O zamana kadar iletişim bilgilerimizden bize ulaşabilirsiniz."
-			image="/logo.png"
-		/>
-	</head>
-	<body class="construction-page">
-		<div class="split">
-			<div class="panel-left">
-				<main class="construction">
-					<img src="/logo.png" alt="MAKINEND logosu" class="logo" />
-					<h1>Yakında burada olacağız.</h1>
-					<p class="description">
-						O zamana kadar bize aşağıdan ulaşabilirsiniz.
-					</p>
-					<div class="contact-block">
-						<a href="mailto:info@makinend.com" class="contact-link">info@makinend.com</a>
-						<p class="address">
-							Hacı Halil Mah. 1207 Sok. No:1/5 Match Office<br />
-							Gebze, Kocaeli
-						</p>
-						<a href="tel:+905306148241" class="phone-link">+90 530 614 82 41</a>
-					</div>
-				</main>
-			</div>
-			<div class="panel-right" aria-hidden="true">
-				<img
-					src="/right-image.jpg"
-					alt=""
-					class="right-image"
-					loading="eager"
-					decoding="async"
-				/>
+<BaseLayout
+	title="Makinend | Endüstriyel Mühendislik ve Özel Makine İmalatı"
+	description="Konveyör ve taşıma sistemleri, roll form hatları, özel makineler, çelik konstrüksiyonlar ve kalıplar. İhtiyacı analiz ediyor, mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz."
+>
+	<section class="hero industrial-surface">
+		<div class="container hero-inner">
+			<h1 class="hero-title">
+				Mühendislikten<br />
+				çalışan sisteme
+			</h1>
+
+			<p class="hero-text">
+				Taşıma sistemlerinden roll form hatlarına, özel makinelerden çelik
+				konstrüksiyonlara kadar; ihtiyacı ve prosesi analiz ediyor,
+				mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz.
+			</p>
+
+			<div class="hero-actions">
+				<a href="/iletisim" class="btn btn-primary">İletişim</a>
+				<a href="/hakkimizda" class="btn btn-ghost">Hakkımızda</a>
 			</div>
 		</div>
-	</body>
-</html>
+	</section>
+
+	<section class="band-section">
+		<div class="container">
+			<div class="band">
+				{
+					featured.map((category) => (
+						<article class="card">
+							<div class="card-media">
+								<PlaceholderMedia />
+							</div>
+							<div class="card-body">
+								<h3 class="card-title">{category.title}</h3>
+								<p class="card-text">{category.intro}</p>
+								<a href={categoryHref(category)} class="card-link link-small">
+									İncele
+								</a>
+							</div>
+						</article>
+					))
+				}
+
+				<article class="card card-dark">
+					<div class="card-body">
+						<h3 class="card-dark-title">
+							Projeler ve<br />
+							referanslar
+						</h3>
+						<p class="card-dark-text">
+							Taşıma hatları, roll form sistemleri, kırma ve ayrıştırma
+							tesisleri ile prosese özel makinelerde üstlendiğimiz işler.
+						</p>
+						<a href="/projeler" class="card-dark-link link-small">Projelere git</a>
+					</div>
+				</article>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
 
 <style>
-	:global(body.construction-page) {
-		position: relative;
-		margin: 0;
-		min-height: 100vh;
-		overflow-x: hidden;
-		background: #ffffff;
-		color: #767676;
-	}
+	/* Hero ölçüleri şablondan: 790px yükseklik, başlık üstten 180px,
+	   metin bloğu 540px, başlık-metin 30px, metin-buton 50px. */
 
-	.split {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		min-height: 100vh;
-		width: 100%;
-	}
-
-	.panel-left {
+	.hero {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 2rem clamp(1rem, 4vw, 3rem);
-		text-align: center;
+		align-items: flex-start;
+		min-height: clamp(34rem, 62vw, 49.375rem);
+		padding-top: clamp(3.5rem, 14vw, 11.25rem);
+		padding-bottom: 8.75rem;
 	}
 
-	.panel-right {
+	.hero-inner {
 		position: relative;
-		min-height: 100vh;
-		background: #e8e8e6;
+		z-index: 1;
 	}
 
-	.right-image {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: center;
+	.hero-title {
+		max-width: 33.75rem;
+		color: var(--color-text-inverse);
 	}
 
-	.construction {
+	.hero-text {
+		max-width: 33.75rem;
+		margin-top: 1.875rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-top: 3.125rem;
+	}
+
+	/* Kart şeridi: hero'nun alt kenarına biner. */
+
+	/* Hero konumlandırılmış olduğu için şerit kendi katmanına alınır;
+	   aksi halde hero, kartların binen kısmının üstüne boyanır. */
+	.band-section {
 		position: relative;
-		z-index: 2;
-		width: 100%;
-		max-width: min(52rem, 100%);
-		padding: 0;
+		z-index: 1;
+		padding-bottom: var(--space-section);
 	}
 
-	.logo {
-		display: block;
-		width: clamp(400px, 100%, 820px);
-		max-width: 100%;
-		margin: 0 auto 1.1rem;
-		border-radius: 0;
+	.band {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 3.75rem; /* 60px, şablonun kolon aralığı */
+		margin-top: -8.75rem; /* 140px hero'ya biner */
 	}
 
-	h1 {
-		margin: 0 0 0.65rem;
-		font-size: clamp(0.9rem, 2.8vw + 0.55rem, 3.25rem);
-		line-height: 1.04;
-		font-weight: 500;
-		color: #6e6e6e;
-		letter-spacing: -0.02em;
-		white-space: nowrap;
-	}
-
-	.description {
-		margin: 0 auto 1.2rem;
-		max-width: 60ch;
-		color: #8a8a8a;
-		font-size: 1.18rem;
-		line-height: 1.45;
-	}
-
-	.contact-block {
+	.card {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: 0.55rem;
-		margin-top: 0.1rem;
+		background: var(--color-surface);
+		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
 	}
 
-	.address {
-		margin: 0;
-		max-width: 48ch;
-		font-size: 0.95rem;
-		line-height: 1.5;
-		color: #9a9a9a;
+	.card-media {
+		border-bottom: 3px solid var(--color-copper);
 	}
 
-	.phone-link {
-		font-size: 0.97rem;
-		font-weight: 600;
-		color: #7c7c7c;
-		text-decoration: none;
-		border-bottom: 1px solid rgba(120, 120, 120, 0.35);
+	.card-body {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		padding: 1.875rem; /* 30px */
+	}
+
+	/* Kart yükseklikleri eşit kalsın diye tanıtım metni kırpılır. */
+	.card-text {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 4;
+		overflow: hidden;
+		margin-top: 0.625rem; /* 10px */
+		color: var(--color-text-muted);
+	}
+
+	/* Başlıklar farklı satır sayısına çıksa da linkler aynı hizada kalır. */
+	.card-link {
+		align-self: flex-start;
+		margin-top: auto;
+		padding-top: 1.4rem;
 		padding-bottom: 0.15rem;
-		transition: border-color 150ms ease, color 150ms ease;
+		border-bottom: 1px solid var(--color-copper);
+		color: var(--color-copper);
+		transition: color var(--transition);
 	}
 
-	.phone-link:hover {
-		border-color: #c97f3c;
-		color: #5a5a5a;
+	.card-link:hover {
+		color: var(--color-charcoal);
+		border-color: var(--color-charcoal);
 	}
 
-	.contact-link {
-		display: inline-block;
-		padding: 0.25rem 0;
-		border-bottom: 1px solid rgba(120, 120, 120, 0.35);
-		color: #7c7c7c;
-		text-decoration: none;
-		font-weight: 600;
-		font-size: 1rem;
-		transition: border-color 150ms ease, color 150ms ease;
+	/* Koyu kart */
+
+	.card-dark {
+		background: var(--color-charcoal-panel);
 	}
 
-	.contact-link:hover {
-		border-color: #c97f3c;
-		color: #5a5a5a;
+	.card-dark-title {
+		color: var(--color-copper);
 	}
 
-	@media (max-width: 900px) {
-		.split {
+	.card-dark-text {
+		margin-top: 0.625rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.card-dark-link {
+		align-self: flex-start;
+		margin-top: auto;
+		padding-top: 1.4rem;
+		color: var(--color-text-inverse);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+		transition:
+			color var(--transition),
+			border-color var(--transition);
+	}
+
+	.card-dark-link:hover {
+		color: var(--color-copper-bright);
+		border-color: var(--color-copper-bright);
+	}
+
+	@media (max-width: 68rem) {
+		.band {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 2rem;
+		}
+	}
+
+	@media (max-width: 40rem) {
+		.hero {
+			padding-bottom: clamp(3rem, 10vw, 5rem);
+		}
+
+		.band {
 			grid-template-columns: 1fr;
+			margin-top: 0;
+			padding-top: var(--space-section);
 		}
 
-		.panel-right {
-			order: -1;
-			min-height: min(42vh, 420px);
-			height: min(42vh, 420px);
-		}
-
-		.panel-left {
-			padding: 1.75rem 1.25rem 2.5rem;
-		}
-
-		.logo {
-			width: min(98vw, 580px);
-			margin-bottom: 0.75rem;
-		}
-
-		.description {
-			font-size: 1.02rem;
-		}
-
-		h1 {
-			font-size: clamp(0.82rem, 4.4vw + 0.3rem, 3.25rem);
+		.hero-actions .btn {
+			flex: 1 1 12rem;
 		}
 	}
 </style>

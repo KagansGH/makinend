@@ -1,0 +1,41 @@
+---
+/**
+ * Ürün fotoğrafı gelene kadar kullanılan nötr endüstriyel görsel alanı.
+ * Gerçek fotoğraflar eklendiğinde bu bileşenin yerine <img> geçecek.
+ * Oran şablonun kart görselinden: 244 / 166.
+ */
+interface Props {
+	ratio?: string;
+}
+
+const { ratio = "244 / 166" } = Astro.props;
+---
+
+<div class="placeholder" style={`aspect-ratio: ${ratio};`}>
+	<img src="/M.png" alt="" class="mark" aria-hidden="true" />
+</div>
+
+<style>
+	/* Hero'ya binen kartlarda koyu zeminden ayrışabilmesi için
+	   hero'dan bir ton açık. */
+	.placeholder {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		overflow: hidden;
+		background-color: var(--color-charcoal-panel);
+		background-image: repeating-linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.035) 0,
+			rgba(255, 255, 255, 0.035) 1px,
+			transparent 1px,
+			transparent 9px
+		);
+	}
+
+	.mark {
+		width: 22%;
+		max-width: 5rem;
+		opacity: 0.2;
+	}
+</style>
