@@ -315,9 +315,10 @@ function isActive(href: string): boolean {
 </script>
 
 <style>
+	/* Menü şeridinin (z-index 50) üstünde: dil ve arama panelleri şeridin üzerine açılır. */
 	.site-header {
 		position: relative;
-		z-index: 40;
+		z-index: 55;
 		background: var(--color-surface);
 		font-family: var(--font-nav);
 	}
