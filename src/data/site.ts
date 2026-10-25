@@ -7,8 +7,8 @@ export const site = {
 		phone: "+90 531 232 5423",
 		phoneHref: "tel:+905312325423",
 		addressLines: [
-			"Hacı Halil Mah. 1207 Sok. No:1/5 Match Office",
-			"Gebze, Kocaeli",
+			"Hacı Halil Mah. 1207 Sok. No:1/5 Match Office, Gebze",
+			"Kocaeli, Türkiye",
 		],
 	},
 	languages: [
