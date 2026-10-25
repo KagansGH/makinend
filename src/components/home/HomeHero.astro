@@ -1,0 +1,489 @@
+---
+import { getProduct, productHref } from "../../data/products";
+
+/* Her sahne gerçek bir alt kategoriye bağlanır; pager etiketi ürün adını taşır. */
+const scenes = [
+	{ image: "hero-roll-form", category: "roll-form-ve-mekik-arabasi", product: "roll-form-hatlari" },
+	{ image: "hero-konveyor", category: "tasiyici-sistemler", product: "konveyor-sistemleri" },
+	{ image: "hero-bunker", category: "konstruksiyonlar", product: "bunkerler" },
+	{ image: "hero-kartezyen", category: "ozel-makina-imalati", product: "kartezyen-sistemler" },
+];
+
+const slides = scenes.flatMap((scene) => {
+	const match = getProduct(scene.category, scene.product);
+	if (!match) return [];
+	return [
+		{
+			src: `/images/home/${scene.image}.webp`,
+			srcset: `/images/home/${scene.image}-1200.webp 1200w, /images/home/${scene.image}.webp 2400w`,
+			title: match.product.title,
+			categoryTitle: match.category.title,
+			href: productHref(match.category, match.product),
+		},
+	];
+});
+---
+
+<section class="hero" data-hero aria-label="Makinend">
+	<div class="hero-media" aria-hidden="true">
+		{
+			slides.map((slide, i) => (
+				<div class:list={["hero-slide", { "is-active": i === 0 }]} data-hero-slide>
+					<img
+						src={slide.src}
+						srcset={slide.srcset}
+						sizes="100vw"
+						alt=""
+						width="2400"
+						height="1350"
+						loading={i === 0 ? "eager" : "lazy"}
+						fetchpriority={i === 0 ? "high" : "auto"}
+						decoding="async"
+					/>
+				</div>
+			))
+		}
+	</div>
+	<div class="hero-shade" aria-hidden="true"></div>
+
+	<div class="container hero-inner">
+		<span class="hero-eyebrow">
+			<span class="hero-eyebrow-rule" aria-hidden="true"></span>
+			Mühendislik · İmalat · Devreye alma
+		</span>
+
+		<h1 class="hero-title">
+			<span class="hero-line"><span>Mühendislikten</span></span>
+			<span class="hero-line"><span>çalışan sisteme</span></span>
+		</h1>
+
+		<p class="hero-text">
+			Taşıma sistemlerinden roll form hatlarına, özel makinelerden çelik
+			konstrüksiyonlara kadar; ihtiyacı ve prosesi analiz ediyor,
+			mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz.
+		</p>
+
+		<div class="hero-actions">
+			<a href="/iletisim" class="btn btn-primary">İletişim</a>
+			<a href="/hakkimizda" class="btn btn-ghost">Hakkımızda</a>
+		</div>
+	</div>
+
+	<div class="container hero-pager-wrap">
+		<ol class="hero-pager" aria-label="Öne çıkan çözümler">
+			{
+				slides.map((slide, i) => (
+					<li>
+						<button
+							type="button"
+							class:list={["hero-dot", { "is-active": i === 0 }]}
+							data-hero-dot={i}
+							aria-label={`${slide.title} görselini göster`}
+							aria-current={i === 0 ? "true" : undefined}
+						>
+							<span class="hero-dot-bar" aria-hidden="true">
+								<span class="hero-dot-fill" />
+							</span>
+							<span class="hero-dot-num">{String(i + 1).padStart(2, "0")}</span>
+							<span class="hero-dot-label">{slide.title}</span>
+						</button>
+					</li>
+				))
+			}
+		</ol>
+		<a href={slides[0]?.href} class="hero-scene-link link-small" data-hero-link>
+			<span data-hero-category>{slides[0]?.categoryTitle}</span>
+			<span aria-hidden="true">→</span>
+		</a>
+	</div>
+
+	<script
+		type="application/json"
+		data-hero-data
+		set:html={JSON.stringify(slides.map(({ href, categoryTitle }) => ({ href, categoryTitle })))}
+	/>
+</section>
+
+<script>
+	const hero = document.querySelector<HTMLElement>("[data-hero]");
+
+	if (hero) {
+		const slides = [...hero.querySelectorAll<HTMLElement>("[data-hero-slide]")];
+		const dots = [...hero.querySelectorAll<HTMLButtonElement>("[data-hero-dot]")];
+		const link = hero.querySelector<HTMLAnchorElement>("[data-hero-link]");
+		const category = hero.querySelector<HTMLElement>("[data-hero-category]");
+		const data: { href: string; categoryTitle: string }[] = JSON.parse(
+			hero.querySelector("[data-hero-data]")?.textContent ?? "[]",
+		);
+
+		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const interval = 7000;
+		let current = 0;
+		let timer: number | undefined;
+
+		hero.style.setProperty("--hero-interval", `${interval}ms`);
+
+		const show = (next: number) => {
+			current = (next + slides.length) % slides.length;
+
+			slides.forEach((slide, i) => slide.classList.toggle("is-active", i === current));
+			dots.forEach((dot, i) => {
+				dot.classList.toggle("is-active", i === current);
+				if (i === current) dot.setAttribute("aria-current", "true");
+				else dot.removeAttribute("aria-current");
+			});
+
+			const scene = data[current];
+			if (scene && link && category) {
+				link.href = scene.href;
+				category.textContent = scene.categoryTitle;
+			}
+		};
+
+		const schedule = () => {
+			window.clearInterval(timer);
+			if (reduceMotion) return;
+			timer = window.setInterval(() => show(current + 1), interval);
+		};
+
+		dots.forEach((dot, i) =>
+			dot.addEventListener("click", () => {
+				show(i);
+				schedule();
+			}),
+		);
+
+		/* Sekme arka plandayken döngü durur, dönünce kaldığı yerden sürer. */
+		document.addEventListener("visibilitychange", () => {
+			if (document.hidden) window.clearInterval(timer);
+			else schedule();
+		});
+
+		hero.classList.add("is-ready");
+		schedule();
+	}
+</script>
+
+<style>
+	/* Ölçüler şablondan: 790px yükseklik, başlık üstten 180px, metin bloğu
+	   540px. Alt 140px kart şeridinin binmesine ayrılır. */
+	.hero {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-height: clamp(36rem, 62vw, 49.375rem);
+		padding-top: clamp(4rem, 14vw, 11.25rem);
+		padding-bottom: 8.75rem;
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		isolation: isolate;
+	}
+
+	.hero-media,
+	.hero-slide,
+	.hero-shade {
+		position: absolute;
+		inset: 0;
+	}
+
+	.hero-media {
+		z-index: -2;
+	}
+
+	.hero-slide {
+		opacity: 0;
+		transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.hero-slide.is-active {
+		opacity: 1;
+	}
+
+	.hero-slide img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transform: scale(1.12);
+		transform-origin: 60% 50%;
+		filter: saturate(0.82) contrast(1.04);
+		transition: transform 9s cubic-bezier(0.2, 0.6, 0.3, 1);
+	}
+
+	/* Ken Burns: aktif sahne yavaşça yakınlaşmadan uzaklaşır. */
+	.hero-slide.is-active img {
+		transform: scale(1.02);
+	}
+
+	.hero-shade {
+		z-index: -1;
+		background:
+			linear-gradient(90deg, rgba(14, 14, 14, 0.9) 0%, rgba(14, 14, 14, 0.72) 38%, rgba(14, 14, 14, 0.25) 75%, rgba(14, 14, 14, 0.35) 100%),
+			linear-gradient(0deg, rgba(14, 14, 14, 0.75) 0%, rgba(14, 14, 14, 0) 45%);
+	}
+
+	.hero-inner {
+		position: relative;
+	}
+
+	.hero-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.875rem;
+		font-family: var(--font-nav);
+		font-size: 0.75rem;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.hero-eyebrow-rule {
+		display: block;
+		width: 2.75rem;
+		height: 1px;
+		background: currentColor;
+		transform-origin: left;
+	}
+
+	.hero-title {
+		display: flex;
+		flex-direction: column;
+		max-width: 40rem;
+		margin-top: 1.5rem;
+		font-size: clamp(2.25rem, 5.4vw, 4.25rem);
+		line-height: 1.02;
+		letter-spacing: -0.5px;
+		color: var(--color-text-inverse);
+	}
+
+	/* Satır maskesi: her satır alttan kayarak görünür. */
+	.hero-line {
+		display: block;
+		overflow: hidden;
+		padding-bottom: 0.08em;
+	}
+
+	.hero-line > span {
+		display: block;
+	}
+
+	.hero-text {
+		max-width: 33.75rem;
+		margin-top: 1.875rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-top: 3.125rem;
+	}
+
+	/* Açılış koreografisi yalnızca JS hazır olduğunda oynar;
+	   JS yoksa içerik olduğu gibi görünür. */
+	@media (prefers-reduced-motion: no-preference) {
+		.hero.is-ready .hero-eyebrow-rule {
+			animation: hero-rule 0.9s 0.1s cubic-bezier(0.7, 0, 0.2, 1) both;
+		}
+
+		.hero.is-ready .hero-eyebrow,
+		.hero.is-ready .hero-text,
+		.hero.is-ready .hero-actions,
+		.hero.is-ready .hero-pager-wrap {
+			animation: hero-fade 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+		}
+
+		.hero.is-ready .hero-eyebrow {
+			animation-delay: 0.05s;
+		}
+
+		.hero.is-ready .hero-line > span {
+			animation: hero-line 1.1s cubic-bezier(0.2, 0.75, 0.15, 1) both;
+		}
+
+		.hero.is-ready .hero-line:nth-child(1) > span {
+			animation-delay: 0.2s;
+		}
+
+		.hero.is-ready .hero-line:nth-child(2) > span {
+			animation-delay: 0.34s;
+		}
+
+		.hero.is-ready .hero-text {
+			animation-delay: 0.6s;
+		}
+
+		.hero.is-ready .hero-actions {
+			animation-delay: 0.75s;
+		}
+
+		.hero.is-ready .hero-pager-wrap {
+			animation-delay: 1s;
+		}
+	}
+
+	@keyframes hero-line {
+		from {
+			transform: translateY(105%);
+		}
+		to {
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes hero-fade {
+		from {
+			opacity: 0;
+			transform: translateY(18px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	@keyframes hero-rule {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	/* Pager: kart şeridinin binme payının hemen üstünde, sağda. */
+	.hero-pager-wrap {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: calc(8.75rem + 2.25rem);
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 1.25rem;
+	}
+
+	.hero-pager {
+		display: grid;
+		grid-template-columns: repeat(4, 8.5rem);
+		gap: 1.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.hero-dot {
+		display: grid;
+		gap: 0.5rem;
+		width: 100%;
+		padding: 0.25rem 0;
+		border: 0;
+		background: none;
+		text-align: left;
+		color: rgba(255, 255, 255, 0.55);
+		cursor: pointer;
+		transition: color var(--transition);
+	}
+
+	.hero-dot:hover,
+	.hero-dot.is-active {
+		color: var(--color-text-inverse);
+	}
+
+	.hero-dot-bar {
+		position: relative;
+		display: block;
+		height: 2px;
+		overflow: hidden;
+		background: rgba(255, 255, 255, 0.22);
+	}
+
+	.hero-dot-fill {
+		position: absolute;
+		inset: 0;
+		background: var(--color-copper-bright);
+		transform: scaleX(0);
+		transform-origin: left;
+	}
+
+	.hero-dot.is-active .hero-dot-fill {
+		animation: hero-progress var(--hero-interval, 7000ms) linear forwards;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-dot.is-active .hero-dot-fill {
+			animation: none;
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes hero-progress {
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	.hero-dot-num {
+		font-family: var(--font-heading);
+		font-size: 1.125rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.hero-dot-label {
+		font-family: var(--font-nav);
+		font-size: 0.6875rem;
+		line-height: 1.4;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	.hero-scene-link {
+		display: inline-flex;
+		gap: 0.6rem;
+		color: var(--color-copper-bright);
+		transition: gap var(--transition), color var(--transition);
+	}
+
+	.hero-scene-link:hover {
+		gap: 1rem;
+		color: var(--color-text-inverse);
+	}
+
+	@media (max-width: 68rem) {
+		.hero {
+			padding-bottom: 10.75rem;
+		}
+
+		.hero-pager-wrap {
+			position: relative;
+			bottom: auto;
+			align-items: flex-start;
+			margin-top: 3.5rem;
+		}
+
+		.hero-pager {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			width: 100%;
+			max-width: 36rem;
+		}
+	}
+
+	@media (max-width: 40rem) {
+		.hero {
+			padding-bottom: 3rem;
+		}
+
+		.hero-shade {
+			background: linear-gradient(0deg, rgba(14, 14, 14, 0.92) 0%, rgba(14, 14, 14, 0.72) 60%, rgba(14, 14, 14, 0.55) 100%);
+		}
+
+		.hero-actions .btn {
+			flex: 1 1 12rem;
+		}
+
+		.hero-dot-label {
+			display: none;
+		}
+	}
+</style>

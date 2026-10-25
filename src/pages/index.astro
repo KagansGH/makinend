@@ -1,160 +1,627 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PlaceholderMedia from "../components/PlaceholderMedia.astro";
-import { categoryHref, getCategory } from "../data/products";
+import HomeHero from "../components/home/HomeHero.astro";
+import HomeShowcase from "../components/home/HomeShowcase.astro";
+import { categoryHref, productCategories, productHref } from "../data/products";
+import { site } from "../data/site";
 
-/* Hero altındaki kart şeridi. Şablonun şeridi 3 kolondur: iki içerik kartı
-   ve sağda koyu panel. Kartlar bu yüzden ikiyle sınırlı. */
-const featuredSlugs = ["tasiyici-sistemler", "roll-form-ve-mekik-arabasi"];
+const productCount = productCategories.reduce((sum, category) => sum + category.children.length, 0);
 
-const featured = featuredSlugs
-	.map((slug) => getCategory(slug))
-	.filter((category): category is NonNullable<typeof category> => Boolean(category));
+/* Hero'ya binen şerit: şablonun iki içerik kartı + sağda koyu panel dizilişi. */
+const pillars = [
+	{
+		image: "band-muhendislik",
+		title: "Mühendislik ve analiz",
+		text: "Proses analizi, mekanik hesap ve sonlu elemanlar analizi ile sistemi henüz üretime geçmeden dijital ortamda doğruluyoruz.",
+		href: "#surec",
+		link: "Sürecimiz",
+	},
+	{
+		image: "band-imalat",
+		title: "İmalat ve devreye alma",
+		text: "Tasarımı onaylanan sistemi imal ediyor, sahada kuruyor, kalibre ediyor ve ekibinizi eğiterek çalışır halde teslim ediyoruz.",
+		href: "#urunler",
+		link: "Ürün grupları",
+	},
+];
+
+const capabilities = [
+	"Proses ve ihtiyaç analizi",
+	"Mekanik tasarım ve FEA",
+	"Anahtar teslim tesis kurulumu",
+	"Retrofit ve modernizasyon",
+	"Bakım ve işletme desteği",
+	"ISO · EN · ASME uyumlu projeler",
+];
+
+/* Teknik değerler kaynak dokümanlardaki üst sınırlardır. */
+const metrics = [
+	{ value: 4, decimals: 1, unit: "mm", label: "Roll form hatlarında işlenen sac kalınlığı", note: "0,3 mm’den başlayarak" },
+	{ value: 2000, decimals: 0, unit: "mm", label: "Konveyör bant genişliği", note: "300 mm’den başlayarak" },
+	{ value: 60, decimals: 0, unit: "m/dk", label: "Değişken hızlı bant hızı", note: "Proje bazlı ayarlanır" },
+	{ value: 10, decimals: 0, suffix: "+", unit: "t/sa", label: "Titreşimli elek kapasitesi", note: "1 – 4 kat arası" },
+];
+
+const process = [
+	{
+		title: "İhtiyaç ve proses analizi",
+		text: "Malzeme karakteri, kapasite, hat yerleşimi ve sahadaki kısıtlar birlikte değerlendirilir. Doğru sistem burada belirlenir.",
+	},
+	{
+		title: "Mühendislik ve analiz",
+		text: "Mekanik hesaplar ve FEA ile mukavemet, yorulma ömrü ve dinamik yük davranışı üretimden önce doğrulanır.",
+	},
+	{
+		title: "Tasarım",
+		text: "SolidWorks ve AutoCAD ile imalata hazır, montajı ve bakımı kolay, milimetrik detaylı tasarım.",
+	},
+	{
+		title: "İmalat ve montaj",
+		text: "Talaşlı imalattan kaynaklı montaja, hidrolik ve pnömatik entegrasyona kadar kendi disiplinimizle üretim.",
+	},
+	{
+		title: "Kurulum ve devreye alma",
+		text: "Sahada kurulum, kalibrasyon, performans doğrulaması ve operatör eğitimiyle çalışır halde teslim.",
+	},
+];
+
+const services = [
+	{ title: "Mühendislik ve Ar-Ge", text: "Uluslararası standartlara uygun mekanik tasarım ve sistem entegrasyonu." },
+	{ title: "İleri analiz (FEA)", text: "Şase mukavemeti, yorulma ömrü ve dinamik yük davranışının dijital doğrulaması." },
+	{ title: "Endüstriyel tasarım", text: "Kavramsal fikirden imalata hazır, montaj ve bakım dostu detay tasarıma." },
+	{ title: "Anahtar teslim tesis", text: "Yerleşimden enerji hatlarına, montajdan ilk ürüne kadar tek elden kurulum." },
+	{ title: "Stratejik danışmanlık", text: "Teknik ve ekonomik fizibilite, yerleşim planı ve makine parkuru seçimi." },
+	{ title: "Proje yöneticiliği", text: "Tedarikten saha takvimine bütçe, zaman ve kalite kontrolü." },
+	{ title: "Retrofit ve modernizasyon", text: "Mevcut makinelere güncel mekanik ve otomasyon; yeni yatırımın çok altında." },
+	{ title: "Bakım ve işletme desteği", text: "Kestirimci ve periyodik bakımla plansız duruşların önüne geçen destek." },
+];
+
+const closingSteps = [
+	{ title: "Talebinizi iletin", text: "Proses, malzeme ve kapasite bilgisini paylaşın." },
+	{ title: "Keşif ve analiz", text: "Sahayı ve ihtiyacı birlikte değerlendirelim." },
+	{ title: "Teknik teklif", text: "Sistem seçimi, kapsam ve takvimle net bir teklif." },
+];
+
+const sectors = [
+	"Madencilik ve agrega",
+	"Çimento ve yapı kimyasalları",
+	"Gıda, un ve yem",
+	"Otomotiv yan sanayi",
+	"Enerji",
+	"Geri dönüşüm",
+	"Kimya ve plastik",
+	"Lojistik ve depolama",
+	"Beyaz eşya",
+	"İnşaat ve yapı",
+];
 ---
 
 <BaseLayout
 	title="Makinend | Endüstriyel Mühendislik ve Özel Makine İmalatı"
-	description="Konveyör ve taşıma sistemleri, roll form hatları, özel makineler, çelik konstrüksiyonlar ve kalıplar. İhtiyacı analiz ediyor, mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz."
+	description="Konveyör ve taşıma sistemleri, roll form hatları, özel makineler, çelik konstrüksiyonlar, kalıplar ve eleme sistemleri. İhtiyacı analiz ediyor, mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz."
+	image="/images/home/hero-roll-form-1200.webp"
 >
-	<section class="hero industrial-surface">
-		<div class="container hero-inner">
-			<h1 class="hero-title">
-				Mühendislikten<br />
-				çalışan sisteme
-			</h1>
+	<script is:inline>
+		document.documentElement.classList.add("js-motion");
+	</script>
 
-			<p class="hero-text">
-				Taşıma sistemlerinden roll form hatlarına, özel makinelerden çelik
-				konstrüksiyonlara kadar; ihtiyacı ve prosesi analiz ediyor,
-				mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz.
-			</p>
+	<HomeHero />
 
-			<div class="hero-actions">
-				<a href="/iletisim" class="btn btn-primary">İletişim</a>
-				<a href="/hakkimizda" class="btn btn-ghost">Hakkımızda</a>
-			</div>
-		</div>
-	</section>
-
+	<!-- Hero'ya binen şerit -->
 	<section class="band-section">
 		<div class="container">
 			<div class="band">
 				{
-					featured.map((category) => (
-						<article class="card">
+					pillars.map((pillar, i) => (
+						<article class="card" data-reveal style={`--reveal-delay: ${i * 120}ms`}>
 							<div class="card-media">
-								<PlaceholderMedia />
+								<img
+									src={`/images/home/${pillar.image}.webp`}
+									alt=""
+									width="1100"
+									height="619"
+									loading="lazy"
+									decoding="async"
+								/>
 							</div>
 							<div class="card-body">
-								<h3 class="card-title">{category.title}</h3>
-								<p class="card-text">{category.intro}</p>
-								<a href={categoryHref(category)} class="card-link link-small">
-									İncele
+								<span class="card-num">{String(i + 1).padStart(2, "0")}</span>
+								<h3 class="card-title">{pillar.title}</h3>
+								<p class="card-text">{pillar.text}</p>
+								<a href={pillar.href} class="card-link link-small">
+									{pillar.link}
 								</a>
 							</div>
 						</article>
 					))
 				}
 
-				<article class="card card-dark">
+				<article class="card card-dark" data-reveal style="--reveal-delay: 240ms">
 					<div class="card-body">
 						<h3 class="card-dark-title">
-							Projeler ve<br />
-							referanslar
+							Uçtan uca<br />
+							çözüm ortağı
 						</h3>
 						<p class="card-dark-text">
-							Taşıma hatları, roll form sistemleri, kırma ve ayrıştırma
-							tesisleri ile prosese özel makinelerde üstlendiğimiz işler.
+							Fikir aşamasından tesisin tam kapasite çalışmasına kadar her adımda
+							aynı ekip, aynı sorumluluk.
 						</p>
-						<a href="/projeler" class="card-dark-link link-small">Projelere git</a>
+						<div class="card-dark-stats">
+							<div>
+								<span class="card-dark-num" data-count={productCategories.length}>
+									{productCategories.length}
+								</span>
+								<span class="card-dark-label">Ürün grubu</span>
+							</div>
+							<div>
+								<span class="card-dark-num" data-count={productCount}>{productCount}</span>
+								<span class="card-dark-label">Çözüm</span>
+							</div>
+						</div>
+						<a href="/projeler" class="btn btn-ghost card-dark-btn">Projelere git</a>
 					</div>
 				</article>
 			</div>
 		</div>
 	</section>
+
+	<!-- Kurumsal özet -->
+	<section class="about">
+		<div class="container about-grid">
+			<div class="about-visual" data-reveal="wipe">
+				<div class="about-accent" aria-hidden="true"></div>
+				<figure class="about-main">
+					<img
+						src="/images/home/about-main.webp"
+						alt="Makinend roll form hattı üretim alanında"
+						width="1100"
+						height="619"
+						loading="lazy"
+						decoding="async"
+						data-parallax="-0.06"
+					/>
+				</figure>
+				<figure class="about-detail">
+					<img
+						src="/images/home/about-detail.webp"
+						alt="Titreşimli elek, tesis içi yerleşim"
+						width="1100"
+						height="619"
+						loading="lazy"
+						decoding="async"
+					/>
+				</figure>
+				<div class="about-badge">
+					<span class="about-badge-title">Gebze</span>
+					<span class="about-badge-text">Mühendislik ve imalat merkezi</span>
+				</div>
+			</div>
+
+			<div class="about-copy">
+				<span class="eyebrow" data-reveal>Makinend</span>
+				<h2 class="section-title" data-reveal style="--reveal-delay: 80ms">
+					Bütünsel mühendislik,<br />tek elden sorumluluk
+				</h2>
+				<p class="about-lead" data-reveal style="--reveal-delay: 160ms">
+					Sadece bir imalatçı değil, fikir aşamasından tesisin tam kapasite
+					çalışmasına kadar yanınızda olan bir çözüm ortağıyız.
+				</p>
+				<p class="about-text" data-reveal style="--reveal-delay: 220ms">
+					Bazen ihtiyacınızı bilirsiniz ama çözümün nasıl olması gerektiği henüz
+					belli değildir. İşimiz tam olarak burada başlar: prosesi analiz eder,
+					doğru sistemi belirler, mühendisliğini yapar ve üretilebilir hale
+					getiririz. Çevrim süresini kısaltan, enerji verimliliğini artıran ve
+					operatör ergonomisini önceleyen sistemler kurarız.
+				</p>
+				<ul class="about-list">
+					{
+						capabilities.map((item, i) => (
+							<li data-reveal style={`--reveal-delay: ${260 + i * 60}ms`}>
+								{item}
+							</li>
+						))
+					}
+				</ul>
+				<a href="/hakkimizda" class="btn btn-dark" data-reveal style="--reveal-delay: 400ms">
+					Hakkımızda
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Ürün grupları -->
+	<section class="products" id="urunler">
+		<div class="container">
+			<header class="split-head">
+				<div>
+					<span class="eyebrow" data-reveal>Ürün grupları</span>
+					<h2 class="section-title" data-reveal style="--reveal-delay: 80ms">
+						Taşımadan şekillendirmeye
+					</h2>
+				</div>
+				<p class="split-head-text" data-reveal style="--reveal-delay: 160ms">
+					Dökme malzemenin taşınmasından sacın profile dönüşmesine, depolamadan
+					elemeye kadar altı ürün grubunda; her sistem malzeme karakteri, kapasite
+					ve hat yerleşimi birlikte değerlendirilerek tasarlanır.
+				</p>
+			</header>
+
+			<div class="product-grid">
+				{
+					productCategories.map((category, i) => (
+						<article class="product" data-reveal style={`--reveal-delay: ${(i % 3) * 110}ms`}>
+							<a href={categoryHref(category)} class="product-media" tabindex="-1" aria-hidden="true">
+								<img
+									src={`/images/home/cat-${category.slug}.webp`}
+									alt=""
+									width="1100"
+									height="619"
+									loading="lazy"
+									decoding="async"
+								/>
+								<span class="product-num">{String(i + 1).padStart(2, "0")}</span>
+							</a>
+							<div class="product-body">
+								<h3 class="product-title">
+									<a href={categoryHref(category)}>{category.title}</a>
+								</h3>
+								<p class="product-text">{category.intro}</p>
+								<ul class="product-children">
+									{category.children.map((child) => (
+										<li>
+											<a href={productHref(category, child)}>{child.title}</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</div>
+	</section>
+
+	<HomeShowcase />
+
+	<!-- Teknik sınırlar -->
+	<section class="metrics" aria-label="Teknik değerler">
+		<div class="container metrics-grid">
+			{
+				metrics.map((metric, i) => (
+					<div class="metric" data-reveal style={`--reveal-delay: ${i * 100}ms`}>
+						<span class="metric-value">
+							<span data-count={metric.value} data-count-decimals={metric.decimals}>
+								{metric.value.toLocaleString("tr-TR", { minimumFractionDigits: metric.decimals })}
+							</span>
+							{metric.suffix && <span class="metric-suffix">{metric.suffix}</span>}
+							<span class="metric-unit">{metric.unit}</span>
+						</span>
+						<span class="metric-label">{metric.label}</span>
+						<span class="metric-note">{metric.note}</span>
+					</div>
+				))
+			}
+		</div>
+	</section>
+
+	<!-- Özel makine: parallax zemin üstünde kayan panel -->
+	<section class="statement">
+		<div class="statement-bg" aria-hidden="true">
+			<img
+				src="/images/home/parallax-bunker.webp"
+				srcset="/images/home/parallax-bunker-1200.webp 1200w, /images/home/parallax-bunker.webp 2400w"
+				sizes="100vw"
+				alt=""
+				width="2400"
+				height="1350"
+				loading="lazy"
+				decoding="async"
+				data-parallax="0.18"
+			/>
+		</div>
+		<div class="container">
+			<div class="statement-box" data-reveal="left">
+				<span class="eyebrow">Özel makine imalatı</span>
+				<h2 class="statement-title">Standart makinenin bittiği yerde başlıyoruz</h2>
+				<p class="statement-text">
+					Her tesisin kendine has dinamikleri, fiziksel kısıtları ve hedefleri
+					vardır. Talebinizi bir mühendislik problemi olarak ele alıyor, makinenizi
+					imalata geçmeden dijital ortamda modelliyor ve simülasyonlarla
+					doğruluyoruz. Teslimden sonra da kurulum, kalibrasyon ve eğitimle
+					yanınızdayız.
+				</p>
+				<div class="statement-actions">
+					<a href="/iletisim" class="btn btn-primary">Teklif Al</a>
+					<a href="/ozel-makina-imalati" class="btn btn-ghost">Özel makineler</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Süreç -->
+	<section class="process" id="surec">
+		<div class="container">
+			<header class="split-head">
+				<div>
+					<span class="eyebrow" data-reveal>Çalışma biçimimiz</span>
+					<h2 class="section-title" data-reveal style="--reveal-delay: 80ms">
+						İhtiyaçtan tasarıma,<br />tasarımdan çalışan sisteme
+					</h2>
+				</div>
+				<p class="split-head-text" data-reveal style="--reveal-delay: 160ms">
+					Projelere sistem seçimiyle başlıyor, mühendislik hesaplarını ve tasarımı
+					buna göre yapıyoruz. Her adım bir sonrakinin riskini azaltmak için var.
+				</p>
+			</header>
+
+			<div class="process-line" data-progress-line>
+				<span class="process-track" aria-hidden="true">
+					<span class="process-fill"></span>
+				</span>
+				<ol class="process-steps">
+					{
+						process.map((step, i) => (
+							<li class="process-step" data-reveal style={`--reveal-delay: ${i * 120}ms`}>
+								<span class="process-num">{String(i + 1).padStart(2, "0")}</span>
+								<span class="process-dot" aria-hidden="true" />
+								<h3 class="process-title">{step.title}</h3>
+								<p class="process-text">{step.text}</p>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</div>
+	</section>
+
+	<!-- Hizmetler -->
+	<section class="services">
+		<div class="container services-grid">
+			<div class="services-panel" data-reveal="left">
+				<h2 class="services-title">Mühendislik<br />hizmetleri</h2>
+				<p class="services-text">
+					Makine imalatının ötesinde; yatırımın fizibilitesinden işletme dönemine
+					kadar her aşamada aynı mühendislik bakışıyla yanınızdayız.
+				</p>
+				<a href="/iletisim" class="services-link link-small">
+					Bizimle görüşün <span aria-hidden="true">→</span>
+				</a>
+			</div>
+
+			<ul class="service-list">
+				{
+					services.map((service, i) => (
+						<li class="service" data-reveal style={`--reveal-delay: ${(i % 4) * 80}ms`}>
+							<span class="service-num">{String(i + 1).padStart(2, "0")}</span>
+							<h3 class="service-title">{service.title}</h3>
+							<p class="service-text">{service.text}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<!-- Sektörler -->
+	<section class="sectors" aria-label="Hizmet verdiğimiz sektörler">
+		<div class="container">
+			<span class="eyebrow">Hizmet verdiğimiz sektörler</span>
+		</div>
+		<div class="marquee">
+			{
+				[0, 1].map((row) => (
+					<div class:list={["marquee-row", { "marquee-row--reverse": row === 1 }]} aria-hidden={row === 1 ? "true" : undefined}>
+						{[0, 1].map((copy) => (
+							<ul class="marquee-track" aria-hidden={copy === 1 ? "true" : undefined}>
+								{(row === 0 ? sectors : [...sectors].reverse()).map((sector) => (
+									<li class:list={["marquee-item", { "marquee-item--outline": row === 1 }]}>{sector}</li>
+								))}
+							</ul>
+						))}
+					</div>
+				))
+			}
+		</div>
+	</section>
+
+	<!-- Kapanış -->
+	<section class="closing">
+		<div class="closing-bg" aria-hidden="true">
+			<img
+				src="/images/home/cta-helezon.webp"
+				srcset="/images/home/cta-helezon-1200.webp 1200w, /images/home/cta-helezon.webp 2400w"
+				sizes="100vw"
+				alt=""
+				width="2400"
+				height="1350"
+				loading="lazy"
+				decoding="async"
+				data-parallax="0.12"
+			/>
+		</div>
+		<div class="container closing-grid">
+			<div class="closing-copy">
+				<span class="eyebrow" data-reveal>Teklif ve keşif</span>
+				<h2 class="closing-title" data-reveal style="--reveal-delay: 80ms">
+					Projenizi birlikte<br />mühendislik diline çevirelim
+				</h2>
+				<p class="closing-text" data-reveal style="--reveal-delay: 160ms">
+					İhtiyacınızı anlatın; sistem seçimini, mühendisliğini ve sahada devreye
+					almayı birlikte planlayalım.
+				</p>
+				<div class="closing-actions" data-reveal style="--reveal-delay: 240ms">
+					<a href="/iletisim" class="btn btn-primary">Teklif Al</a>
+					<a href={site.contact.phoneHref} class="btn btn-ghost">{site.contact.phone}</a>
+				</div>
+			</div>
+
+			<ol class="closing-steps" data-reveal="right" style="--reveal-delay: 200ms">
+				{
+					closingSteps.map((step, i) => (
+						<li>
+							<span class="closing-step-num">{String(i + 1).padStart(2, "0")}</span>
+							<span class="closing-step-title">{step.title}</span>
+							<span class="closing-step-text">{step.text}</span>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
 </BaseLayout>
 
+<script>
+	import "../scripts/home-motion";
+</script>
+
+<style is:global>
+	/* Görünür olunca açılma. Sınıf yalnızca JS çalışınca eklenir; JS yoksa
+	   içerik gizlenmez. */
+	.js-motion [data-reveal] {
+		opacity: 0;
+		transform: translate3d(0, 34px, 0);
+		transition:
+			opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+			transform 1s cubic-bezier(0.2, 0.7, 0.2, 1),
+			clip-path 1.2s cubic-bezier(0.7, 0, 0.2, 1);
+		transition-delay: var(--reveal-delay, 0ms);
+	}
+
+	.js-motion [data-reveal="left"] {
+		transform: translate3d(-60px, 0, 0);
+	}
+
+	.js-motion [data-reveal="right"] {
+		transform: translate3d(60px, 0, 0);
+	}
+
+	.js-motion [data-reveal="wipe"] {
+		opacity: 1;
+		transform: none;
+		clip-path: inset(0 100% 0 0);
+	}
+
+	.js-motion [data-reveal].is-visible {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* clip-path yalnızca wipe'ta; aksi halde taşan işaretler kırpılır. */
+	.js-motion [data-reveal="wipe"].is-visible {
+		clip-path: inset(0 0 0 0);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.js-motion [data-reveal] {
+			opacity: 1;
+			transform: none;
+			clip-path: none;
+			transition: none;
+		}
+	}
+</style>
+
 <style>
-	/* Hero ölçüleri şablondan: 790px yükseklik, başlık üstten 180px,
-	   metin bloğu 540px, başlık-metin 30px, metin-buton 50px. */
-
-	.hero {
-		display: flex;
-		align-items: flex-start;
-		min-height: clamp(34rem, 62vw, 49.375rem);
-		padding-top: clamp(3.5rem, 14vw, 11.25rem);
-		padding-bottom: 8.75rem;
+	/* Çapa linkleri yapışkan menü şeridinin (38px) altında kalmasın. */
+	section[id] {
+		scroll-margin-top: 38px;
 	}
 
-	.hero-inner {
-		position: relative;
-		z-index: 1;
+	.section-title {
+		margin-top: 0.875rem;
+		font-size: clamp(1.875rem, 3.4vw, 2.75rem);
 	}
 
-	.hero-title {
-		max-width: 33.75rem;
+	.btn-dark {
+		background: transparent;
+		border-color: var(--color-charcoal);
+		color: var(--color-charcoal);
+	}
+
+	.btn-dark:hover {
+		background: var(--color-charcoal);
 		color: var(--color-text-inverse);
 	}
 
-	.hero-text {
-		max-width: 33.75rem;
-		margin-top: 1.875rem;
-		color: var(--color-text-inverse-muted);
+	/* Başlık solda, ince dikey çizgi, açıklama sağda (şablonun proje başlığı). */
+	.split-head {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 2.5rem;
+		align-items: center;
 	}
 
-	.hero-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		margin-top: 3.125rem;
+	.split-head-text {
+		padding-left: 2.5rem;
+		border-left: 1px solid var(--color-border-strong);
+		color: var(--color-text-muted);
 	}
 
-	/* Kart şeridi: hero'nun alt kenarına biner. */
+	/* ——— Kart şeridi ——— */
 
 	/* Hero konumlandırılmış olduğu için şerit kendi katmanına alınır;
 	   aksi halde hero, kartların binen kısmının üstüne boyanır. */
 	.band-section {
 		position: relative;
 		z-index: 1;
-		padding-bottom: var(--space-section);
 	}
 
 	.band {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 3.75rem; /* 60px, şablonun kolon aralığı */
-		margin-top: -8.75rem; /* 140px hero'ya biner */
+		gap: 3.75rem;
+		margin-top: -8.75rem;
 	}
 
 	.card {
 		display: flex;
 		flex-direction: column;
 		background: var(--color-surface);
-		box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+		box-shadow: 0 24px 50px rgba(0, 0, 0, 0.14);
 	}
 
 	.card-media {
+		position: relative;
+		aspect-ratio: 244 / 166;
+		overflow: hidden;
 		border-bottom: 3px solid var(--color-copper);
+		background: var(--color-charcoal-panel);
+	}
+
+	.card-media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.card:hover .card-media img {
+		transform: scale(1.08);
 	}
 
 	.card-body {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
-		padding: 1.875rem; /* 30px */
+		padding: 1.875rem;
 	}
 
-	/* Kart yükseklikleri eşit kalsın diye tanıtım metni kırpılır. */
+	.card-num {
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: var(--color-copper);
+	}
+
+	.card-title {
+		margin-top: 0.375rem;
+	}
+
 	.card-text {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 4;
-		overflow: hidden;
-		margin-top: 0.625rem; /* 10px */
+		margin-top: 0.625rem;
 		color: var(--color-text-muted);
 	}
 
-	/* Başlıklar farklı satır sayısına çıksa da linkler aynı hizada kalır. */
 	.card-link {
 		align-self: flex-start;
 		margin-top: auto;
@@ -162,7 +629,7 @@ const featured = featuredSlugs
 		padding-bottom: 0.15rem;
 		border-bottom: 1px solid var(--color-copper);
 		color: var(--color-copper);
-		transition: color var(--transition);
+		transition: color var(--transition), border-color var(--transition);
 	}
 
 	.card-link:hover {
@@ -170,57 +637,984 @@ const featured = featuredSlugs
 		border-color: var(--color-charcoal);
 	}
 
-	/* Koyu kart */
-
 	.card-dark {
 		background: var(--color-charcoal-panel);
 	}
 
+	.card-dark .card-body {
+		padding: 2.5rem 2.25rem;
+	}
+
 	.card-dark-title {
-		color: var(--color-copper);
+		font-size: 1.75rem;
+		color: var(--color-copper-bright);
 	}
 
 	.card-dark-text {
-		margin-top: 0.625rem;
+		margin-top: 1.125rem;
 		color: var(--color-text-inverse-muted);
 	}
 
-	.card-dark-link {
-		align-self: flex-start;
-		margin-top: auto;
-		padding-top: 1.4rem;
-		color: var(--color-text-inverse);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-		transition:
-			color var(--transition),
-			border-color var(--transition);
+	.card-dark-stats {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		margin-top: 2rem;
+		padding-top: 1.75rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
-	.card-dark-link:hover {
-		color: var(--color-copper-bright);
-		border-color: var(--color-copper-bright);
+	.card-dark-num {
+		display: block;
+		font-family: var(--font-heading);
+		font-size: 3rem;
+		font-weight: 700;
+		line-height: 1;
+		color: var(--color-text-inverse);
 	}
+
+	.card-dark-label {
+		display: block;
+		margin-top: 0.375rem;
+		font-family: var(--font-nav);
+		font-size: 0.6875rem;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.card-dark-btn {
+		align-self: flex-start;
+		margin-top: auto;
+		min-height: 2.5rem;
+		padding-inline: 1.25rem;
+		font-size: 0.8125rem;
+	}
+
+	.card-dark-stats + .card-dark-btn {
+		margin-top: 2.25rem;
+	}
+
+	/* ——— Kurumsal özet ——— */
+
+	.about {
+		padding-block: var(--space-section) calc(var(--space-section) * 1.1);
+		overflow: hidden;
+	}
+
+	.about-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+		gap: clamp(2.5rem, 6vw, 6rem);
+		align-items: center;
+	}
+
+	/* Aksan çerçevesi wipe maskesinin içinde kalsın diye üst ve sol pay bırakılır. */
+	.about-visual {
+		position: relative;
+		padding: 1.5rem 12% 14% 1.5rem;
+	}
+
+	.about-accent {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 42%;
+		height: 55%;
+		border: 1px solid var(--color-copper);
+	}
+
+	.about-main {
+		position: relative;
+		margin: 0;
+		aspect-ratio: 5 / 4;
+		overflow: hidden;
+		background: var(--color-charcoal-panel);
+	}
+
+	.about-main img {
+		width: 100%;
+		height: 115%;
+		object-fit: cover;
+		margin-top: -7.5%;
+	}
+
+	.about-detail {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		width: 52%;
+		margin: 0;
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+		border: 0.5rem solid var(--color-surface);
+		box-shadow: 0 24px 50px rgba(0, 0, 0, 0.18);
+	}
+
+	.about-detail img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.about-badge {
+		position: absolute;
+		left: 0;
+		bottom: 3%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 1.25rem 1.5rem;
+		background: var(--color-copper);
+		color: var(--color-text-inverse);
+	}
+
+	.about-badge-title {
+		font-family: var(--font-heading);
+		font-size: 1.5rem;
+		font-weight: 700;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+
+	.about-badge-text {
+		font-family: var(--font-nav);
+		font-size: 0.6875rem;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	.about-lead {
+		margin-top: 1.5rem;
+		font-size: 1.125rem;
+		line-height: 1.65;
+		color: var(--color-text);
+	}
+
+	.about-text {
+		margin-top: 1rem;
+		color: var(--color-text-muted);
+	}
+
+	.about-list {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem 1.5rem;
+		margin: 1.75rem 0 2.25rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.about-list li {
+		position: relative;
+		padding-left: 1.5rem;
+		font-family: var(--font-heading);
+		font-size: 1rem;
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--color-charcoal);
+	}
+
+	.about-list li::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0.45em;
+		width: 0.625rem;
+		height: 0.625rem;
+		border: 2px solid var(--color-copper);
+		transform: rotate(45deg);
+	}
+
+	/* ——— Ürün grupları ——— */
+
+	.products {
+		padding-block: var(--space-section);
+		background: var(--color-surface-muted);
+	}
+
+	.product-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 2rem;
+		margin-top: clamp(2.5rem, 5vw, 3.75rem);
+	}
+
+	.product {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		background: var(--color-surface);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+		transition: box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.product::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 2;
+		height: 3px;
+		background: var(--color-copper);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.6s cubic-bezier(0.7, 0, 0.2, 1);
+	}
+
+	.product:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 28px 50px rgba(0, 0, 0, 0.12);
+	}
+
+	.product:hover::before {
+		transform: scaleX(1);
+	}
+
+	.product-media {
+		position: relative;
+		display: block;
+		aspect-ratio: 16 / 10;
+		overflow: hidden;
+		background: var(--color-charcoal-panel);
+	}
+
+	.product-media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.6s ease;
+		filter: saturate(0.85);
+	}
+
+	.product:hover .product-media img {
+		transform: scale(1.07);
+		filter: saturate(1);
+	}
+
+	.product-num {
+		position: absolute;
+		left: 1.75rem;
+		bottom: 0;
+		display: grid;
+		place-items: center;
+		width: 3.5rem;
+		height: 3.5rem;
+		background: var(--color-charcoal-panel);
+		border-top: 3px solid var(--color-copper);
+		font-family: var(--font-heading);
+		font-size: 1.125rem;
+		font-weight: 700;
+		color: var(--color-text-inverse);
+	}
+
+	.product-body {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		padding: 1.75rem;
+	}
+
+	.product-title a {
+		text-decoration: none;
+		transition: color var(--transition);
+	}
+
+	.product-title a:hover {
+		color: var(--color-copper);
+	}
+
+	.product-text {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+		margin-top: 0.625rem;
+		color: var(--color-text-muted);
+	}
+
+	.product-children {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: auto 0 0;
+		padding: 1.5rem 0 0;
+		list-style: none;
+	}
+
+	.product-children a {
+		display: inline-block;
+		padding: 0.35rem 0.7rem;
+		border: 1px solid var(--color-border);
+		font-family: var(--font-nav);
+		font-size: 0.6875rem;
+		line-height: 1.4;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--color-nav);
+		transition: background-color var(--transition), border-color var(--transition), color var(--transition);
+	}
+
+	.product-children a:hover {
+		background: var(--color-charcoal);
+		border-color: var(--color-charcoal);
+		color: var(--color-text-inverse);
+	}
+
+	/* ——— Teknik değerler ——— */
+
+	.metrics {
+		background: var(--color-surface);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.metrics-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.metric {
+		display: flex;
+		flex-direction: column;
+		padding: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 2.5vw, 2rem);
+		border-left: 1px solid var(--color-border);
+	}
+
+	.metric:last-child {
+		border-right: 1px solid var(--color-border);
+	}
+
+	.metric-value {
+		display: flex;
+		align-items: baseline;
+		gap: 0.4rem;
+		font-family: var(--font-heading);
+		font-size: clamp(2.75rem, 5vw, 4rem);
+		font-weight: 700;
+		line-height: 1;
+		color: var(--color-charcoal);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.metric-suffix {
+		margin-left: -0.4rem;
+		color: var(--color-copper);
+	}
+
+	.metric-unit {
+		font-size: 0.38em;
+		color: var(--color-copper);
+		text-transform: none;
+	}
+
+	.metric-label {
+		margin-top: 1rem;
+		font-family: var(--font-heading);
+		font-size: 1.0625rem;
+		font-weight: 600;
+		line-height: 1.3;
+		text-transform: uppercase;
+		color: var(--color-charcoal);
+	}
+
+	.metric-note {
+		margin-top: 0.375rem;
+		font-size: 0.8125rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+	}
+
+	/* ——— Özel makine paneli ——— */
+
+	.statement {
+		position: relative;
+		padding-block: clamp(5rem, 11vw, 9rem);
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		isolation: isolate;
+	}
+
+	.statement-bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+	}
+
+	.statement-bg::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(90deg, rgba(14, 14, 14, 0.55), rgba(14, 14, 14, 0.15));
+	}
+
+	.statement-bg img {
+		position: absolute;
+		top: -15%;
+		left: 0;
+		width: 100%;
+		height: 130%;
+		object-fit: cover;
+		filter: saturate(0.75);
+	}
+
+	.statement-box {
+		max-width: 38rem;
+		padding: clamp(2rem, 4vw, 3.25rem);
+		background: rgba(52, 52, 52, 0.94);
+		border-top: 3px solid var(--color-copper);
+		backdrop-filter: blur(6px);
+	}
+
+	.statement-title {
+		margin-top: 0.875rem;
+		font-size: clamp(1.75rem, 3vw, 2.375rem);
+		color: var(--color-copper-bright);
+	}
+
+	.statement-text {
+		margin-top: 1.25rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.statement-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-top: 2.25rem;
+	}
+
+	/* ——— Süreç ——— */
+
+	.process {
+		padding-block: var(--space-section);
+		background: var(--color-surface);
+	}
+
+	.process-line {
+		--progress: 0;
+		position: relative;
+		margin-top: clamp(3rem, 6vw, 4.5rem);
+	}
+
+	.process-steps {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		gap: 2rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.process-track {
+		position: absolute;
+		top: 3.6rem;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: var(--color-border-strong);
+	}
+
+	.process-fill {
+		position: absolute;
+		inset: 0;
+		background: var(--color-copper);
+		transform: scaleX(var(--progress));
+		transform-origin: left;
+	}
+
+	.process-step {
+		position: relative;
+	}
+
+	.process-num {
+		display: block;
+		font-family: var(--font-heading);
+		font-size: 2.75rem;
+		font-weight: 700;
+		line-height: 1;
+		color: transparent;
+		-webkit-text-stroke: 1px var(--color-copper);
+	}
+
+	.process-dot {
+		position: relative;
+		display: block;
+		width: 0.75rem;
+		height: 0.75rem;
+		margin: 0.9rem 0 1.5rem;
+		background: var(--color-surface);
+		border: 2px solid var(--color-copper);
+		transform: rotate(45deg);
+	}
+
+	.process-title {
+		font-size: 1.1875rem;
+	}
+
+	.process-text {
+		margin-top: 0.625rem;
+		font-size: 0.875rem;
+		line-height: 1.75;
+		color: var(--color-text-muted);
+	}
+
+	/* ——— Hizmetler ——— */
+
+	.services {
+		padding-block: var(--space-section);
+		background: var(--color-surface-muted);
+	}
+
+	.services-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr);
+		gap: 2rem;
+		align-items: start;
+	}
+
+	.services-panel {
+		position: sticky;
+		top: calc(38px + 2rem);
+		display: flex;
+		flex-direction: column;
+		padding: 2.5rem 2.25rem;
+		background: var(--color-charcoal-panel);
+	}
+
+	.services-title {
+		font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+		color: var(--color-copper-bright);
+	}
+
+	.services-text {
+		margin-top: 1.25rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.services-link {
+		align-self: flex-start;
+		display: inline-flex;
+		gap: 0.5rem;
+		margin-top: 2rem;
+		padding-bottom: 0.15rem;
+		border-bottom: 1px solid var(--color-copper);
+		color: var(--color-copper-bright);
+		transition: gap var(--transition), color var(--transition);
+	}
+
+	.services-link:hover {
+		gap: 0.9rem;
+		color: var(--color-text-inverse);
+	}
+
+	/* Çizgiler kartlardan gelir; kartlar açılırken liste zemini görünmez. */
+	.service-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--color-border);
+		border-left: 1px solid var(--color-border);
+	}
+
+	.service {
+		position: relative;
+		padding: 2rem 2rem 2.25rem;
+		border-right: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--color-border);
+		background: var(--color-surface);
+		overflow: hidden;
+		isolation: isolate;
+	}
+
+	/* Hover'da koyu zemin alttan dolar. */
+	.service::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: var(--color-charcoal);
+		transform: scaleY(0);
+		transform-origin: bottom;
+		transition: transform 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+	}
+
+	.service:hover::before {
+		transform: scaleY(1);
+	}
+
+	.service-num {
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: var(--color-copper);
+	}
+
+	.service-title {
+		margin-top: 0.5rem;
+		font-size: 1.25rem;
+		transition: color 0.4s ease;
+	}
+
+	.service-text {
+		margin-top: 0.5rem;
+		font-size: 0.875rem;
+		line-height: 1.75;
+		color: var(--color-text-muted);
+		transition: color 0.4s ease;
+	}
+
+	.service:hover .service-title {
+		color: var(--color-text-inverse);
+	}
+
+	.service:hover .service-text {
+		color: var(--color-text-inverse-muted);
+	}
+
+	/* ——— Sektörler ——— */
+
+	.sectors {
+		padding-block: clamp(3.5rem, 6vw, 5rem);
+		overflow: hidden;
+		background: var(--color-surface);
+	}
+
+	.marquee {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 1.75rem;
+	}
+
+	.marquee-row {
+		display: flex;
+		width: max-content;
+	}
+
+	.marquee-track {
+		display: flex;
+		flex-shrink: 0;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.marquee-row {
+			animation: marquee 60s linear infinite;
+		}
+
+		.marquee-row--reverse {
+			animation-direction: reverse;
+			animation-duration: 75s;
+		}
+
+		.marquee:hover .marquee-row {
+			animation-play-state: paused;
+		}
+	}
+
+	@keyframes marquee {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	.marquee-item {
+		display: flex;
+		align-items: center;
+		gap: 2.5rem;
+		padding-right: 2.5rem;
+		font-family: var(--font-heading);
+		font-size: clamp(2rem, 4.5vw, 3.75rem);
+		font-weight: 700;
+		line-height: 1.15;
+		text-transform: uppercase;
+		white-space: nowrap;
+		color: var(--color-charcoal);
+	}
+
+	.marquee-item::after {
+		content: "";
+		width: 0.6rem;
+		height: 0.6rem;
+		background: var(--color-copper);
+		transform: rotate(45deg);
+	}
+
+	.marquee-item--outline {
+		color: transparent;
+		-webkit-text-stroke: 1px #b9b9b9;
+	}
+
+	.marquee-item--outline::after {
+		background: transparent;
+		border: 1px solid var(--color-copper);
+	}
+
+	/* ——— Kapanış ——— */
+
+	.closing {
+		position: relative;
+		padding-block: clamp(5rem, 10vw, 8rem);
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		color: var(--color-text-inverse);
+		isolation: isolate;
+	}
+
+	.closing-bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+	}
+
+	.closing-bg::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(90deg, rgba(14, 14, 14, 0.94) 0%, rgba(14, 14, 14, 0.8) 50%, rgba(14, 14, 14, 0.55) 100%);
+	}
+
+	.closing-bg img {
+		position: absolute;
+		top: -12%;
+		left: 0;
+		width: 100%;
+		height: 124%;
+		object-fit: cover;
+		filter: saturate(0.7);
+	}
+
+	.closing-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+		gap: clamp(2.5rem, 6vw, 6rem);
+		align-items: end;
+	}
+
+	.closing-title {
+		margin-top: 0.875rem;
+		font-size: clamp(2rem, 4vw, 3.25rem);
+		color: var(--color-text-inverse);
+	}
+
+	.closing-text {
+		max-width: 34rem;
+		margin-top: 1.25rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.closing-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-top: 2.25rem;
+	}
+
+	.closing-steps {
+		display: grid;
+		gap: 1.75rem;
+		margin: 0;
+		padding: 0.5rem 0 0.5rem 2rem;
+		border-left: 1px solid rgba(255, 255, 255, 0.18);
+		list-style: none;
+	}
+
+	.closing-steps li {
+		display: grid;
+		grid-template-columns: 2.5rem 1fr;
+		column-gap: 0.75rem;
+	}
+
+	.closing-step-num {
+		grid-row: span 2;
+		font-family: var(--font-heading);
+		font-size: 1.5rem;
+		font-weight: 700;
+		line-height: 1;
+		color: var(--color-copper-bright);
+	}
+
+	.closing-step-title {
+		font-family: var(--font-heading);
+		font-size: 1.125rem;
+		font-weight: 700;
+		line-height: 1.2;
+		text-transform: uppercase;
+		color: var(--color-text-inverse);
+	}
+
+	.closing-step-text {
+		margin-top: 0.25rem;
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: var(--color-text-inverse-muted);
+	}
+
+	/* ——— Kırılımlar ——— */
 
 	@media (max-width: 68rem) {
 		.band {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 2rem;
 		}
+
+		.card-dark {
+			grid-column: 1 / -1;
+		}
+
+		/* Tam genişlikte panel: metin solda, sayılar ve buton sağda. */
+		.card-dark .card-body {
+			display: grid;
+			grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+			column-gap: 3rem;
+			align-items: start;
+		}
+
+		.card-dark-title,
+		.card-dark-text {
+			grid-column: 1;
+		}
+
+		.card-dark-stats {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+			margin-top: 0;
+			padding-top: 0;
+			border-top: 0;
+		}
+
+		.card-dark-stats + .card-dark-btn {
+			grid-column: 2;
+			margin-top: 1.5rem;
+		}
+
+		.product-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.metrics-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.metric:nth-child(-n + 2) {
+			border-bottom: 1px solid var(--color-border);
+		}
+
+		.metric:nth-child(2) {
+			border-right: 1px solid var(--color-border);
+		}
+
+		.process-steps {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+
+		.process-line {
+			padding-left: 2.5rem;
+		}
+
+		.process-track {
+			top: 0;
+			bottom: 0;
+			left: 0.375rem;
+			right: auto;
+			width: 1px;
+			height: auto;
+		}
+
+		.process-fill {
+			transform: scaleY(var(--progress));
+			transform-origin: top;
+		}
+
+		.process-step {
+			padding-bottom: 2.25rem;
+		}
+
+		.process-dot {
+			position: absolute;
+			top: 1rem;
+			left: -2.5rem;
+			margin: 0;
+		}
+
+		.process-num {
+			font-size: 2.25rem;
+		}
+
+		.process-title {
+			margin-top: 0.75rem;
+		}
+
+		.services-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.services-panel {
+			position: static;
+		}
+	}
+
+	@media (max-width: 52rem) {
+		.split-head,
+		.about-grid,
+		.closing-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.split-head {
+			gap: 1.25rem;
+		}
+
+		.split-head-text {
+			padding-left: 1.25rem;
+		}
+
+		.about-visual {
+			max-width: 36rem;
+		}
 	}
 
 	@media (max-width: 40rem) {
-		.hero {
-			padding-bottom: clamp(3rem, 10vw, 5rem);
-		}
-
 		.band {
 			grid-template-columns: 1fr;
 			margin-top: 0;
 			padding-top: var(--space-section);
 		}
 
-		.hero-actions .btn {
-			flex: 1 1 12rem;
+		.product-grid,
+		.service-list,
+		.about-list {
+			grid-template-columns: 1fr;
+		}
+
+		.card-dark .card-body {
+			display: flex;
+		}
+
+		.card-dark-stats {
+			margin-top: 2rem;
+			padding-top: 1.75rem;
+			border-top: 1px solid rgba(255, 255, 255, 0.12);
+		}
+
+		.metrics-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.metric {
+			border-right: 1px solid var(--color-border);
+			border-bottom: 1px solid var(--color-border);
+		}
+
+		.closing-steps {
+			padding-left: 1.25rem;
 		}
 	}
 </style>

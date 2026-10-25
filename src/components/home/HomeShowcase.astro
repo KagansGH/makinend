@@ -1,0 +1,417 @@
+---
+import { getProduct, productHref } from "../../data/products";
+
+/* Değerler kaynak dokümanlardan; dokümanda sayı olmayan üründe sayı uydurulmaz,
+   kapsam satırları kullanılır. */
+const items = [
+	{
+		category: "roll-form-ve-mekik-arabasi",
+		product: "roll-form-hatlari",
+		render: "render-roll-form",
+		body: "Sac bobini sıralı merdane istasyonlarından geçirerek kesintisiz ve aynı kesitte profile dönüştüren hatlar. Açıcıdan kesme istasyonuna kadar merdane dizilimi tamamen ürününüze özel tasarlanır.",
+		specs: [
+			{ label: "Sac kalınlığı", value: "0,3 – 4,0 mm" },
+			{ label: "İşleme genişliği", value: "100 – 800 mm" },
+			{ label: "İlerleme hızı", value: "10 – 25 m/dk" },
+		],
+	},
+	{
+		category: "tasiyici-sistemler",
+		product: "konveyor-sistemleri",
+		render: "render-konveyor",
+		body: "PVC, kauçuk ve modüler bantlı; rulolu, zincirli ve teleskopik konveyörler. Tesisin ölçülerine ve taşınan malzemenin karakterine göre yatay, eğimli veya kademeli projelendirilir.",
+		specs: [
+			{ label: "Bant genişliği", value: "300 – 2000 mm" },
+			{ label: "Bant hızı", value: "5 – 60 m/dk" },
+			{ label: "Eğim", value: "0° – 45°, özelde 90°" },
+		],
+	},
+	{
+		category: "eleme-sistemleri",
+		product: "titresimli-elekler",
+		render: "render-titresimli-elek",
+		body: "Vibro motorların oluşturduğu titreşimle malzemeyi tane boyutuna göre sınıflandıran ve tozdan arındıran elekler. Kat sayısı ve elek gözü istenen fraksiyonlara göre belirlenir.",
+		specs: [
+			{ label: "Kat sayısı", value: "1 – 4 kat" },
+			{ label: "Kapasite", value: "200 kg/sa – 10+ t/sa" },
+			{ label: "Gövde", value: "ST37 · AISI 304 / 316" },
+		],
+	},
+	{
+		category: "ozel-makina-imalati",
+		product: "kartezyen-sistemler",
+		render: "render-kartezyen",
+		body: "Lineer eksenler üzerine kurulu X-Y-Z hareket sistemleri. Yükleme, boşaltma ve dizme gibi prosese özel hareketler için sıfırdan tasarlanır, mevcut hatta entegre edilir.",
+		specs: [
+			{ label: "Hareket", value: "X · Y · Z lineer eksen" },
+			{ label: "Entegrasyon", value: "Hidrolik · pnömatik" },
+			{ label: "Teslim", value: "Kurulum, kalibrasyon, eğitim" },
+		],
+	},
+	{
+		category: "konstruksiyonlar",
+		product: "silolar",
+		render: "render-silo",
+		body: "Tahıl, çimento, maden ve kimyasal dökme yükler için dikey depolama. Sızdırmaz gövdesiyle malzemeyi dış etkenlerden korur, hatta tampon stok görevi görür.",
+		specs: [
+			{ label: "Malzeme", value: "Tahıl · çimento · mineral" },
+			{ label: "Bağlantı", value: "Helezon · elevatör · konveyör" },
+			{ label: "Hesap", value: "Kapasite ve yoğunluğa göre" },
+		],
+	},
+	{
+		category: "kaliplar",
+		product: "progresif-kaliplar",
+		render: "render-kalip",
+		body: "Kesme, delme ve bükme işlemlerinin tek preste, kademeli istasyonlarda tamamlandığı kalıplar. Kesme boşluğu, geri esneme ve kalıp ömrü tasarım aşamasında hesaplanır.",
+		specs: [
+			{ label: "İşlemler", value: "Kesme · delme · bükme" },
+			{ label: "İşleme", value: "CNC · tel erozyon" },
+			{ label: "Kaplama", value: "TiN · TiAlN" },
+		],
+	},
+];
+
+const steps = items.flatMap((item) => {
+	const match = getProduct(item.category, item.product);
+	if (!match) return [];
+	return [
+		{
+			...item,
+			title: match.product.title,
+			categoryTitle: match.category.title,
+			href: productHref(match.category, match.product),
+			src: `/images/home/${item.render}.webp`,
+		},
+	];
+});
+
+const total = String(steps.length).padStart(2, "0");
+---
+
+<section class="showcase" id="cozumler" data-showcase>
+	<div class="container">
+		<header class="showcase-head">
+			<span class="eyebrow" data-reveal>Öne çıkan çözümler</span>
+			<h2 class="showcase-title" data-reveal style="--reveal-delay: 80ms">
+				Prosese göre<br />tasarlanan sistemler
+			</h2>
+		</header>
+
+		<div class="showcase-grid">
+			<div class="showcase-stage" aria-hidden="true">
+				<div class="showcase-stage-inner">
+					<span class="showcase-index">
+						<span data-showcase-index>01</span>
+						<span class="showcase-total">/ {total}</span>
+					</span>
+					<span class="showcase-label" data-showcase-label>{steps[0]?.categoryTitle}</span>
+
+					<div class="showcase-frames">
+						{
+							steps.map((step, i) => (
+								<figure class:list={["showcase-frame", { "is-active": i === 0 }]} data-showcase-frame>
+									<img src={step.src} alt="" width="1400" height="1100" loading="lazy" decoding="async" />
+								</figure>
+							))
+						}
+					</div>
+					<span class="showcase-floor" />
+				</div>
+			</div>
+
+			<ol class="showcase-steps">
+				{
+					steps.map((step, i) => (
+						<li class:list={["showcase-step", { "is-active": i === 0 }]} data-showcase-step={step.categoryTitle}>
+							<figure class="showcase-inline-media">
+								<img src={step.src} alt={`${step.title} 3B görünüm`} width="1400" height="1100" loading="lazy" decoding="async" />
+							</figure>
+							<span class="showcase-step-num">{String(i + 1).padStart(2, "0")}</span>
+							<span class="showcase-step-cat">{step.categoryTitle}</span>
+							<h3 class="showcase-step-title">{step.title}</h3>
+							<p class="showcase-step-body">{step.body}</p>
+							<dl class="showcase-specs">
+								{step.specs.map((spec) => (
+									<div class="showcase-spec">
+										<dt>{spec.label}</dt>
+										<dd>{spec.value}</dd>
+									</div>
+								))}
+							</dl>
+							<a href={step.href} class="showcase-link link-small">
+								Ürünü incele <span aria-hidden="true">→</span>
+							</a>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</div>
+</section>
+
+<style>
+	.showcase {
+		position: relative;
+		padding-block: var(--space-section);
+		background-color: var(--color-charcoal);
+		background-image:
+			radial-gradient(ellipse 60% 50% at 25% 45%, rgba(178, 105, 40, 0.12), transparent 70%),
+			repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 9px);
+		color: var(--color-text-inverse);
+	}
+
+	.showcase-head {
+		max-width: 40rem;
+	}
+
+	.showcase-title {
+		margin-top: 0.875rem;
+		font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+		color: var(--color-text-inverse);
+	}
+
+	.showcase-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+		gap: clamp(2rem, 5vw, 5rem);
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+	}
+
+	/* Sahne, menü şeridinin (38px) altında sabit kalır. */
+	.showcase-stage {
+		position: relative;
+	}
+
+	.showcase-stage-inner {
+		position: sticky;
+		top: calc(38px + 2.5rem);
+		height: min(36rem, calc(100vh - 38px - 5rem));
+	}
+
+	.showcase-index {
+		position: absolute;
+		top: 0;
+		left: 0;
+		font-family: var(--font-heading);
+		font-size: clamp(5rem, 10vw, 9rem);
+		font-weight: 700;
+		line-height: 0.8;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(255, 255, 255, 0.16);
+	}
+
+	.showcase-total {
+		font-size: 0.25em;
+		-webkit-text-stroke: 0;
+		color: rgba(255, 255, 255, 0.35);
+	}
+
+	.showcase-label {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		font-family: var(--font-nav);
+		font-size: 0.75rem;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.showcase-frames {
+		position: absolute;
+		inset: 8% 0 10% 0;
+	}
+
+	.showcase-frame {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		margin: 0;
+		opacity: 0;
+		transform: translateY(28px) scale(0.94);
+		filter: blur(6px);
+		transition:
+			opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+			transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1),
+			filter 0.8s ease;
+	}
+
+	.showcase-frame.is-active {
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+
+	.showcase-frame img {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45));
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.showcase-frame.is-active img {
+			animation: showcase-float 6s ease-in-out infinite;
+		}
+	}
+
+	@keyframes showcase-float {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-10px);
+		}
+	}
+
+	.showcase-floor {
+		position: absolute;
+		left: 10%;
+		right: 10%;
+		bottom: 7%;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, rgba(200, 123, 50, 0.6), transparent);
+	}
+
+	.showcase-steps {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.showcase-step {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		min-height: min(36rem, 78vh);
+		padding-block: 2.5rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		opacity: 0.28;
+		transition: opacity 0.6s ease;
+	}
+
+	.showcase-step:last-child {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.showcase-step.is-active {
+		opacity: 1;
+	}
+
+	.showcase-inline-media {
+		display: none;
+	}
+
+	.showcase-step-num {
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: var(--color-copper-bright);
+	}
+
+	.showcase-step-cat {
+		margin-top: 0.25rem;
+		font-family: var(--font-nav);
+		font-size: 0.6875rem;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.showcase-step-title {
+		margin-top: 0.75rem;
+		font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+		color: var(--color-text-inverse);
+	}
+
+	.showcase-step-body {
+		margin-top: 1rem;
+		max-width: 30rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.showcase-specs {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1px;
+		margin: 1.75rem 0 0;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.showcase-spec {
+		padding: 0.9rem 1rem;
+		background: var(--color-charcoal);
+	}
+
+	.showcase-spec dt {
+		font-family: var(--font-nav);
+		font-size: 0.625rem;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.showcase-spec dd {
+		margin: 0.35rem 0 0;
+		font-family: var(--font-heading);
+		font-size: 1.0625rem;
+		font-weight: 600;
+		line-height: 1.25;
+		color: var(--color-text-inverse);
+	}
+
+	.showcase-link {
+		align-self: flex-start;
+		display: inline-flex;
+		gap: 0.5rem;
+		margin-top: 1.75rem;
+		padding-bottom: 0.15rem;
+		border-bottom: 1px solid var(--color-copper);
+		color: var(--color-copper-bright);
+		transition: gap var(--transition), color var(--transition), border-color var(--transition);
+	}
+
+	.showcase-link:hover {
+		gap: 0.9rem;
+		color: var(--color-text-inverse);
+		border-color: var(--color-text-inverse);
+	}
+
+	/* Dar ekranda sahne kalkar; her madde kendi render'ını taşır. */
+	@media (max-width: 60rem) {
+		.showcase-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.showcase-stage {
+			display: none;
+		}
+
+		.showcase-step {
+			min-height: 0;
+			opacity: 1;
+		}
+
+		.showcase-inline-media {
+			display: block;
+			margin: 0 0 1.5rem;
+		}
+
+		.showcase-inline-media img {
+			width: 100%;
+			max-height: 18rem;
+			object-fit: contain;
+			filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45));
+		}
+	}
+
+	@media (max-width: 34rem) {
+		.showcase-specs {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
