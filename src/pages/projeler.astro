@@ -1,11 +1,231 @@
 ---
 import PageShell from "../components/PageShell.astro";
+import { productCategories, productHref, productMedia } from "../data/products";
+
+/** Sahadan gerçek görseli olan her çözüm bir uygulama kartı olur. */
+const works = productCategories.flatMap((category) =>
+	category.children.flatMap((product) => {
+		const media = productMedia(product);
+		const cover = media.gallery[0];
+		return cover
+			? [{ category, product, cover, count: media.gallery.length, href: productHref(category, product) }]
+			: [];
+	}),
+);
+
+const filters = productCategories.filter((category) => works.some((work) => work.category.slug === category.slug));
 ---
 
 <PageShell
 	title="Projeler"
-	description="Makinend proje referansları: taşıma hatları, roll form sistemleri ve prosese özel makineler."
-	eyebrow="Referanslar"
-	intro="Taşıma hatları, roll form sistemleri, kırma ve ayrıştırma tesisleri ile prosese özel makinelerde üstlendiğimiz işler."
-	image="/images/home/hero-bunker-1200.webp"
-/>
+	description="Makinend'in imal edip sahada devreye aldığı taşıma, roll form, özel makine, konstrüksiyon, kalıp ve eleme sistemlerinden seçkiler."
+	eyebrow="Uygulamalar"
+	intro="Atölyemizde imal edip sahada devreye aldığımız sistemlerden seçkiler. Her biri bir ihtiyaç analiziyle başladı, çalışan bir sistemle sonuçlandı."
+	image="/images/home/hero-kartezyen-1200.webp"
+	bare
+>
+	<section class="pj">
+		<div class="container">
+			<div class="pj-filters" role="toolbar" aria-label="Ürün grubuna göre filtrele" data-reveal>
+				<button type="button" class="pj-filter is-active" data-filter="all" aria-pressed="true">Tümü</button>
+				{
+					filters.map((category) => (
+						<button type="button" class="pj-filter" data-filter={category.slug} aria-pressed="false">
+							{category.title}
+						</button>
+					))
+				}
+			</div>
+
+			<ul class="pj-grid">
+				{
+					works.map((work, i) => (
+						<li class="pj-item" data-category={work.category.slug} data-reveal style={`--reveal-delay: ${(i % 3) * 90}ms`}>
+							<a href={work.href} class="pj-card">
+								<img src={work.cover} alt={work.product.title} width="1400" height="1050" loading="lazy" decoding="async" />
+								<span class="pj-card-body">
+									<span class="pj-card-cat">{work.category.title}</span>
+									<span class="pj-card-title">{work.product.title}</span>
+									<span class="pj-card-meta">{work.count} görsel · Çözümü incele →</span>
+								</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+</PageShell>
+
+<script>
+	const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-filter]")];
+	const items = [...document.querySelectorAll<HTMLElement>(".pj-item")];
+
+	buttons.forEach((button) => {
+		button.addEventListener("click", () => {
+			const filter = button.dataset.filter;
+			buttons.forEach((other) => {
+				const active = other === button;
+				other.classList.toggle("is-active", active);
+				other.setAttribute("aria-pressed", String(active));
+			});
+			items.forEach((item) => {
+				const show = filter === "all" || item.dataset.category === filter;
+				item.hidden = !show;
+				if (show) item.classList.add("is-visible");
+			});
+		});
+	});
+</script>
+
+<style>
+	.pj {
+		padding-block: var(--space-section);
+	}
+
+	.pj-filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.pj-filter {
+		position: relative;
+		padding: 0.6rem 1.1rem;
+		border: 1px solid var(--color-border);
+		background: transparent;
+		font-family: var(--font-heading);
+		font-size: 0.8125rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: var(--color-charcoal);
+		cursor: pointer;
+		transition:
+			border-color var(--transition),
+			color var(--transition),
+			background-color var(--transition);
+	}
+
+	.pj-filter:hover {
+		border-color: var(--color-copper);
+		color: var(--color-copper);
+	}
+
+	.pj-filter.is-active {
+		border-color: var(--color-charcoal);
+		background: var(--color-charcoal);
+		color: #fff;
+	}
+
+	.pj-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.pj-item[hidden] {
+		display: none;
+	}
+
+	.pj-card {
+		position: relative;
+		display: block;
+		aspect-ratio: 4 / 3.3;
+		overflow: hidden;
+		text-decoration: none;
+		background: var(--color-charcoal);
+	}
+
+	.pj-card img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.pj-card::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, transparent 25%, rgba(12, 12, 12, 0.6) 55%, rgba(12, 12, 12, 0.95));
+		transition: background-color 0.5s ease;
+	}
+
+	.pj-card-body {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 1.5rem;
+		transform: translateY(1.6rem);
+		transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.pj-card-cat {
+		font-family: var(--font-nav);
+		font-size: 10px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.pj-card-title {
+		margin-top: 0.3rem;
+		font-family: var(--font-heading);
+		font-size: 1.375rem;
+		font-weight: 700;
+		line-height: 1.2;
+		text-transform: uppercase;
+		color: #fff;
+	}
+
+	.pj-card-meta {
+		margin-top: 0.6rem;
+		font-family: var(--font-heading);
+		font-size: 0.8125rem;
+		color: rgba(255, 255, 255, 0.75);
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+
+	.pj-card:hover img {
+		transform: scale(1.07);
+	}
+
+	.pj-card:hover .pj-card-body {
+		transform: none;
+	}
+
+	.pj-card:hover .pj-card-meta {
+		opacity: 1;
+	}
+
+	@media (hover: none) {
+		.pj-card-body {
+			transform: none;
+		}
+
+		.pj-card-meta {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 60rem) {
+		.pj-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 34rem) {
+		.pj-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

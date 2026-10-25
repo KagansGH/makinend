@@ -1,5 +1,5 @@
 /**
- * Ana sayfa hareketleri: görünür olunca açılma, sayaç, parallax,
+ * Site geneli hareketler: görünür olunca açılma, sayaç, parallax,
  * sticky çözüm sahnesi ve süreç çizgisi. Hepsi `prefers-reduced-motion`
  * açıkken son haline atlanır.
  */

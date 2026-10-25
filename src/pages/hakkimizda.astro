@@ -1,11 +1,504 @@
 ---
 import PageShell from "../components/PageShell.astro";
+import { productCategories } from "../data/products";
+
+const solutionCount = productCategories.reduce((sum, category) => sum + category.children.length, 0);
+
+const services = [
+	{
+		title: "Mühendislik ve Ar-Ge",
+		lead: "Teorik derinlik, pratik uygulama.",
+		body: "Mekanik tasarımdan sistem entegrasyonuna kadar ISO, EN ve ASME standartlarına uygun projeler geliştiriyoruz. Çevrim süresini kısaltan, enerji verimliliğini artıran ve operatör ergonomisini önceleyen sistemler kuruyoruz.",
+	},
+	{
+		title: "İleri Analiz (FEA ve Simülasyon)",
+		lead: "Dijital doğrulama ile risk yönetimi.",
+		body: "Şaselerin mukavemetini, hareketli aksamların yorulma ömrünü ve dinamik yük altındaki davranışı Sonlu Elemanlar Analizi ile üretimden önce test ediyoruz. Prototip maliyeti düşerken operasyonel güvenlik artar.",
+	},
+	{
+		title: "Endüstriyel Tasarım",
+		lead: "Fonksiyonellik ve hassasiyetin uyumu.",
+		body: "Kavramsal fikirleri SolidWorks ve AutoCAD ile imalata hazır detaylara dönüştürüyoruz. Montajı kolay, bakım dostu ve düşük maliyetle üretilebilir tasarımlar yapıyoruz.",
+	},
+	{
+		title: "Anahtar Teslim Tesis Kurulumu",
+		lead: "Sıfır noktasından tam kapasite üretime.",
+		body: "Makine yerleşimi, enerji hatları koordinasyonu ve hassas montaj dahil kurulumu yönetiyor; tesisi testleri yapılmış, personeli eğitilmiş ve performansı doğrulanmış olarak teslim ediyoruz.",
+	},
+	{
+		title: "Stratejik Danışmanlık",
+		lead: "Veriye dayalı karar desteği.",
+		body: "Teknik ve ekonomik fizibilite, yerleşim planlama, makine parkuru seçimi ve üretim akışı optimizasyonu ile yatırımın geri dönüş süresini kısaltıyoruz.",
+	},
+	{
+		title: "Proje Yöneticiliği",
+		lead: "Bütçe, zaman ve kalite kontrolü.",
+		body: "Tedarik zincirinden saha takvimine kadar tüm süreci şeffaf raporluyor; bütçe aşımını ve zaman kaybını engelleyerek projeyi taahhüt edilen kalitede tamamlıyoruz.",
+	},
+	{
+		title: "Modernizasyon ve Retrofit",
+		lead: "Atıl değerleri ekonomiye kazandırma.",
+		body: "Güncelliğini yitirmiş makineleri modern otomasyon ve mekanik sistemlerle donatıyor; yeni yatırımın çok altında bir maliyetle hassasiyeti ve üretim ömrünü artırıyoruz.",
+	},
+	{
+		title: "Teknik Bakım ve İşletme Desteği",
+		lead: "Sürdürülebilir üretim için kesintisiz destek.",
+		body: "Kestirimci ve periyodik bakımla rulman, dişli ve tahrik gruplarını izliyor; arızaları büyümeden tespit edip hızlı müdahale ve yedek parçayla hattın durmamasını sağlıyoruz.",
+	},
+];
+
+const approach = [
+	{ title: "Dinle ve analiz et", body: "Prosesi, malzemeyi, sahayı ve hedefleri yerinde inceleriz." },
+	{ title: "Tasarla ve doğrula", body: "3D modelleme, hesap ve FEA ile çözümü üretimden önce test ederiz." },
+	{ title: "İmal et", body: "Kendi kontrolümüzde imalat, kaynaklı montaj ve kalite kontrol." },
+	{ title: "Kur ve devreye al", body: "Sahada montaj, kalibrasyon, eğitim ve satış sonrası destek." },
+];
+
+const standards = ["ISO", "EN", "ASME", "FEA", "SolidWorks", "AutoCAD", "İSG"];
 ---
 
 <PageShell
 	title="Hakkımızda"
-	description="Makinend; ihtiyaç analizinden devreye almaya kadar endüstriyel mühendislik ve özel makine imalatı."
+	description="Makinend; Gebze merkezli mühendislik ve özel makine imalatı. İhtiyaç analizinden anahtar teslim kuruluma kadar bütünsel çözüm ortaklığı."
 	eyebrow="Makinend"
 	intro="Fikir aşamasından tesisin tam kapasite çalışmasına kadar her adımda yanınızda olan bir mühendislik ve imalat ekibiyiz."
 	image="/images/home/about-main.webp"
-/>
+	bare
+>
+	<section class="ab-intro">
+		<div class="container ab-intro-grid">
+			<div class="ab-media" data-reveal="left">
+				<img class="ab-media-main" src="/images/home/about-main.webp" alt="Makinend imalat atölyesi" width="1200" height="900" decoding="async" />
+				<img class="ab-media-detail" src="/images/home/about-detail.webp" alt="" width="800" height="800" loading="lazy" decoding="async" />
+				<span class="ab-media-badge">
+					<strong>Gebze</strong>
+					<span>Mühendislik merkezi</span>
+				</span>
+			</div>
+			<div data-reveal="right">
+				<span class="ab-kicker">Biz kimiz</span>
+				<h2 class="ab-title">Bütünsel mühendislik ve endüstriyel çözüm ortaklığı</h2>
+				<p>
+					Makinend olarak endüstrinin hızla değişen dinamiklerine ileri mühendislik disiplinleri ve yenilikçi teknoloji entegrasyonuyla yanıt veriyoruz.
+				</p>
+				<p>
+					Yalnızca bir imalatçı değil; fikir aşamasından tesisin tam kapasite çalışmasına kadar her adımda yanınızda olan stratejik bir çözüm ortağıyız. Gebze merkezli mühendislik gücümüzle işletmenizin operasyonel mükemmelliğe ulaşması için çalışıyoruz.
+				</p>
+				<dl class="ab-figures">
+					<div>
+						<dd data-count={productCategories.length}>{productCategories.length}</dd>
+						<dt>Ürün grubu</dt>
+					</div>
+					<div>
+						<dd data-count={solutionCount}>{solutionCount}</dd>
+						<dt>Çözüm</dt>
+					</div>
+					<div>
+						<dd data-count={services.length}>{services.length}</dd>
+						<dt>Hizmet alanı</dt>
+					</div>
+				</dl>
+			</div>
+		</div>
+	</section>
+
+	<section class="ab-services">
+		<div class="container">
+			<header class="ab-head" data-reveal>
+				<span class="ab-kicker">Hizmetlerimiz</span>
+				<h2>Tek elden, uçtan uca</h2>
+			</header>
+			<ol class="ab-service-list">
+				{
+					services.map((service, i) => (
+						<li class="ab-service" data-reveal style={`--reveal-delay: ${(i % 4) * 80}ms`}>
+							<span class="ab-service-num">{String(i + 1).padStart(2, "0")}</span>
+							<h3>{service.title}</h3>
+							<p class="ab-service-lead">{service.lead}</p>
+							<p>{service.body}</p>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
+
+	<section class="ab-approach">
+		<img class="ab-approach-bg" src="/images/home/parallax-bunker-1200.webp" alt="" width="1200" height="675" loading="lazy" decoding="async" />
+		<div class="container">
+			<header class="ab-head" data-reveal>
+				<span class="ab-kicker">Çalışma yaklaşımımız</span>
+				<h2>İhtiyaçtan tasarıma, tasarımdan çalışan sisteme</h2>
+			</header>
+			<ol class="ab-steps">
+				{
+					approach.map((step, i) => (
+						<li data-reveal style={`--reveal-delay: ${i * 110}ms`}>
+							<span class="ab-step-num">{i + 1}</span>
+							<h3>{step.title}</h3>
+							<p>{step.body}</p>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
+
+	<section class="ab-standards">
+		<div class="container ab-standards-inner" data-reveal>
+			<span class="ab-kicker">Standartlar ve araçlar</span>
+			<ul>
+				{standards.map((item) => <li>{item}</li>)}
+			</ul>
+		</div>
+	</section>
+</PageShell>
+
+<style>
+	.ab-kicker {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		font-family: var(--font-nav);
+		font-size: 12px;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper);
+	}
+
+	.ab-kicker::before {
+		content: "";
+		width: 1.75rem;
+		height: 2px;
+		background: currentColor;
+	}
+
+	.ab-head {
+		margin-bottom: 3rem;
+	}
+
+	.ab-head h2 {
+		margin-top: 0.75rem;
+		font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+	}
+
+	.ab-intro {
+		padding-block: var(--space-section);
+	}
+
+	.ab-intro-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: clamp(2.5rem, 6vw, 5.5rem);
+		align-items: center;
+	}
+
+	.ab-media {
+		position: relative;
+		min-height: 32rem;
+		align-self: stretch;
+	}
+
+	.ab-media-main {
+		position: absolute;
+		inset: 0 14% 12% 0;
+		width: 86%;
+		height: 88%;
+		object-fit: cover;
+	}
+
+	.ab-media-detail {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		width: 44%;
+		aspect-ratio: 1;
+		object-fit: cover;
+		border: 8px solid var(--color-surface);
+	}
+
+	.ab-media-badge {
+		position: absolute;
+		left: 1.5rem;
+		bottom: calc(12% + 1.5rem);
+		display: flex;
+		flex-direction: column;
+		padding: 1rem 1.4rem;
+		background: var(--color-copper);
+		color: #fff;
+	}
+
+	.ab-media-badge strong {
+		font-family: var(--font-heading);
+		font-size: 1.5rem;
+		text-transform: uppercase;
+		line-height: 1;
+	}
+
+	.ab-media-badge span {
+		margin-top: 0.3rem;
+		font-family: var(--font-nav);
+		font-size: 10px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+	}
+
+	.ab-title {
+		margin: 0.75rem 0 1.25rem;
+		font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+	}
+
+	.ab-intro p {
+		margin-top: 1rem;
+		color: var(--color-text-muted);
+	}
+
+	.ab-figures {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		margin: 2.5rem 0 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.ab-figures > div {
+		display: flex;
+		flex-direction: column-reverse;
+		padding: 1.25rem 0 0;
+	}
+
+	.ab-figures > div + div {
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--color-border);
+	}
+
+	.ab-figures dd {
+		margin: 0;
+		font-family: var(--font-heading);
+		font-size: clamp(2.25rem, 4vw, 3rem);
+		font-weight: 700;
+		line-height: 1;
+		color: var(--color-copper);
+	}
+
+	.ab-figures dt {
+		margin-top: 0.4rem;
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.ab-services {
+		padding-block: var(--space-section);
+		background: #f6f3ef;
+	}
+
+	.ab-service-list {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 1px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		background: var(--color-border);
+		border: 1px solid var(--color-border);
+	}
+
+	.ab-service {
+		position: relative;
+		padding: 2.25rem 1.75rem;
+		background: var(--color-surface);
+		transition:
+			background-color 0.45s ease,
+			color 0.45s ease;
+	}
+
+	.ab-service-num {
+		font-family: var(--font-heading);
+		font-size: 2.25rem;
+		font-weight: 700;
+		line-height: 1;
+		color: transparent;
+		-webkit-text-stroke: 1px var(--color-copper);
+	}
+
+	.ab-service h3 {
+		margin-top: 1rem;
+		font-size: 1.0625rem;
+		text-transform: uppercase;
+		transition: color 0.45s ease;
+	}
+
+	.ab-service-lead {
+		margin-top: 0.4rem;
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--color-copper);
+	}
+
+	.ab-service p:last-child {
+		margin-top: 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.7;
+		color: var(--color-text-muted);
+		transition: color 0.45s ease;
+	}
+
+	.ab-service:hover {
+		background: var(--color-charcoal);
+	}
+
+	.ab-service:hover h3 {
+		color: #fff;
+	}
+
+	.ab-service:hover p:last-child {
+		color: var(--color-text-inverse-muted);
+	}
+
+	.ab-approach {
+		position: relative;
+		padding-block: var(--space-section);
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		isolation: isolate;
+	}
+
+	.ab-approach-bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0.18;
+	}
+
+	.ab-approach h2 {
+		color: #fff;
+	}
+
+	.ab-steps {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 2rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		counter-reset: step;
+	}
+
+	.ab-steps li {
+		position: relative;
+		padding-top: 1.75rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	.ab-steps li::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: -2px;
+		width: 3rem;
+		height: 3px;
+		background: var(--color-copper);
+		transition: width 0.6s cubic-bezier(0.7, 0, 0.2, 1);
+	}
+
+	.ab-steps li:hover::before {
+		width: 100%;
+	}
+
+	.ab-step-num {
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: var(--color-copper-bright);
+	}
+
+	.ab-steps h3 {
+		margin-top: 0.5rem;
+		font-size: 1.25rem;
+		text-transform: uppercase;
+		color: #fff;
+	}
+
+	.ab-steps p {
+		margin-top: 0.5rem;
+		font-size: 0.9375rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.ab-standards {
+		padding-block: clamp(2.5rem, 5vw, 3.5rem);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.ab-standards-inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+	}
+
+	.ab-standards ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.ab-standards li {
+		padding: 0.5rem 1.1rem;
+		border: 1px solid var(--color-border);
+		font-family: var(--font-heading);
+		font-weight: 700;
+		letter-spacing: 0.5px;
+		color: var(--color-charcoal);
+		transition:
+			border-color var(--transition),
+			color var(--transition);
+	}
+
+	.ab-standards li:hover {
+		border-color: var(--color-copper);
+		color: var(--color-copper);
+	}
+
+	@media (max-width: 64rem) {
+		.ab-service-list {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		.ab-steps {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 60rem) {
+		.ab-intro-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.ab-media {
+			min-height: 24rem;
+		}
+	}
+
+	@media (max-width: 34rem) {
+		.ab-service-list,
+		.ab-steps {
+			grid-template-columns: 1fr;
+		}
+
+		.ab-media {
+			min-height: 20rem;
+		}
+	}
+</style>

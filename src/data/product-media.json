@@ -1,0 +1,152 @@
+{
+	"elevator-sistemleri": {
+		"gallery": [
+			"/images/products/elevator-sistemleri-1.webp",
+			"/images/products/elevator-sistemleri-2.webp",
+			"/images/products/elevator-sistemleri-3.webp",
+			"/images/products/elevator-sistemleri-4.webp"
+		],
+		"hero": "/images/products/elevator-sistemleri-hero.webp",
+		"render": "/images/products/elevator-sistemleri-render.webp"
+	},
+	"helezon-konveyorler": {
+		"gallery": [
+			"/images/products/helezon-konveyorler-1.webp",
+			"/images/products/helezon-konveyorler-2.webp",
+			"/images/products/helezon-konveyorler-3.webp",
+			"/images/products/helezon-konveyorler-4.webp"
+		],
+		"hero": "/images/products/helezon-konveyorler-hero.webp",
+		"render": "/images/products/helezon-konveyorler-render.webp"
+	},
+	"konveyor-sistemleri": {
+		"gallery": [
+			"/images/products/konveyor-sistemleri-1.webp",
+			"/images/products/konveyor-sistemleri-2.webp",
+			"/images/products/konveyor-sistemleri-3.webp",
+			"/images/products/konveyor-sistemleri-4.webp"
+		],
+		"hero": "/images/products/konveyor-sistemleri-hero.webp",
+		"render": "/images/products/konveyor-sistemleri-render.webp"
+	},
+	"vibrasyonlu-tasima-sistemleri": {
+		"gallery": [
+			"/images/products/vibrasyonlu-tasima-sistemleri-1.webp",
+			"/images/products/vibrasyonlu-tasima-sistemleri-2.webp",
+			"/images/products/vibrasyonlu-tasima-sistemleri-3.webp",
+			"/images/products/vibrasyonlu-tasima-sistemleri-4.webp"
+		],
+		"hero": "/images/products/vibrasyonlu-tasima-sistemleri-hero.webp",
+		"render": "/images/products/vibrasyonlu-tasima-sistemleri-render.webp"
+	},
+	"eksiz-oluk-makineleri": {
+		"gallery": [
+			"/images/products/eksiz-oluk-makineleri-1.webp",
+			"/images/products/eksiz-oluk-makineleri-2.webp",
+			"/images/products/eksiz-oluk-makineleri-3.webp"
+		],
+		"hero": "/images/products/eksiz-oluk-makineleri-hero.webp",
+		"render": "/images/products/eksiz-oluk-makineleri-render.webp"
+	},
+	"roll-form-hatlari": {
+		"gallery": [
+			"/images/products/roll-form-hatlari-1.webp",
+			"/images/products/roll-form-hatlari-2.webp",
+			"/images/products/roll-form-hatlari-3.webp",
+			"/images/products/roll-form-hatlari-4.webp"
+		],
+		"hero": "/images/products/roll-form-hatlari-hero.webp",
+		"render": "/images/products/roll-form-hatlari-render.webp"
+	},
+	"mekik-arabalari": {
+		"gallery": [],
+		"hero": "/images/products/mekik-arabalari-hero.webp"
+	},
+	"kartezyen-sistemler": {
+		"gallery": [
+			"/images/products/kartezyen-sistemler-1.webp",
+			"/images/products/kartezyen-sistemler-2.webp",
+			"/images/products/kartezyen-sistemler-3.webp",
+			"/images/products/kartezyen-sistemler-4.webp"
+		],
+		"hero": "/images/products/kartezyen-sistemler-hero.webp",
+		"render": "/images/products/kartezyen-sistemler-render.webp"
+	},
+	"diger-ozel-makineler": {
+		"gallery": [
+			"/images/products/diger-ozel-makineler-1.webp",
+			"/images/products/diger-ozel-makineler-2.webp"
+		],
+		"hero": "/images/products/diger-ozel-makineler-hero.webp"
+	},
+	"bunkerler": {
+		"gallery": [
+			"/images/products/bunkerler-1.webp",
+			"/images/products/bunkerler-2.webp",
+			"/images/products/bunkerler-3.webp",
+			"/images/products/bunkerler-4.webp"
+		],
+		"hero": "/images/products/bunkerler-hero.webp",
+		"render": "/images/products/bunkerler-render.webp"
+	},
+	"platform-ve-saseler": {
+		"gallery": [
+			"/images/products/platform-ve-saseler-1.webp",
+			"/images/products/platform-ve-saseler-2.webp",
+			"/images/products/platform-ve-saseler-3.webp",
+			"/images/products/platform-ve-saseler-4.webp"
+		],
+		"hero": "/images/products/platform-ve-saseler-hero.webp",
+		"render": "/images/products/platform-ve-saseler-render.webp"
+	},
+	"silolar": {
+		"gallery": [
+			"/images/products/silolar-1.webp",
+			"/images/products/silolar-2.webp",
+			"/images/products/silolar-3.webp",
+			"/images/products/silolar-4.webp"
+		],
+		"hero": "/images/products/silolar-hero.webp",
+		"render": "/images/products/silolar-render.webp"
+	},
+	"bukme-kaliplari": {
+		"gallery": [],
+		"hero": "/images/products/bukme-kaliplari-hero.webp"
+	},
+	"delme-kaliplari": {
+		"gallery": [],
+		"hero": "/images/products/delme-kaliplari-hero.webp"
+	},
+	"kesme-kaliplari": {
+		"gallery": [],
+		"hero": "/images/products/kesme-kaliplari-hero.webp"
+	},
+	"progresif-kaliplar": {
+		"gallery": [
+			"/images/products/progresif-kaliplar-1.webp",
+			"/images/products/progresif-kaliplar-2.webp",
+			"/images/products/progresif-kaliplar-3.webp",
+			"/images/products/progresif-kaliplar-4.webp"
+		],
+		"hero": "/images/products/progresif-kaliplar-hero.webp",
+		"render": "/images/products/progresif-kaliplar-render.webp"
+	},
+	"titresimli-elekler": {
+		"gallery": [
+			"/images/products/titresimli-elekler-1.webp",
+			"/images/products/titresimli-elekler-2.webp",
+			"/images/products/titresimli-elekler-3.webp",
+			"/images/products/titresimli-elekler-4.webp"
+		],
+		"hero": "/images/products/titresimli-elekler-hero.webp",
+		"render": "/images/products/titresimli-elekler-render.webp"
+	},
+	"doner-elekler": {
+		"gallery": [],
+		"hero": "/images/products/doner-elekler-hero.webp"
+	},
+	"yildiz-elekler": {
+		"gallery": [],
+		"hero": "/images/products/yildiz-elekler-hero.webp"
+	}
+}

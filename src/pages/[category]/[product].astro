@@ -5,6 +5,7 @@ import {
 	breadcrumbForProduct,
 	productCategories,
 	productHref,
+	productMedia,
 	relatedProducts,
 	type Product,
 	type ProductCategory,
@@ -20,7 +21,10 @@ export function getStaticPaths() {
 }
 
 const { category, product } = Astro.props as { category: ProductCategory; product: Product };
+const media = productMedia(product);
 const related = relatedProducts(category, product);
+const visual = media.render ?? media.gallery[0];
+const heroImage = media.hero ?? `/images/home/cat-${category.slug}.webp`;
 ---
 
 <PageShell
@@ -28,40 +32,693 @@ const related = relatedProducts(category, product);
 	description={product.intro}
 	eyebrow={category.title}
 	intro={product.intro}
-	image={`/images/home/cat-${category.slug}.webp`}
+	image={heroImage}
 	crumbs={breadcrumbForProduct(category, product)}
+	bare
 >
-	<div class="pending">
-		<h2>İçerik hazırlanıyor</h2>
-		<p>Teknik özellikler, kullanım alanları ve galeri yakında burada olacak.</p>
-	</div>
+	<section class="pd-overview">
+		<div class="container pd-overview-grid">
+			<div class="pd-copy" data-reveal>
+				<span class="pd-kicker">Genel bakış</span>
+				{product.headline && <h2 class="pd-headline">{product.headline}</h2>}
+				{product.description?.map((paragraph) => <p>{paragraph}</p>)}
+				{
+					product.purpose && (
+						<div class="pd-purpose">
+							<span class="pd-purpose-label">Ne işe yarar?</span>
+							<p>{product.purpose}</p>
+						</div>
+					)
+				}
+				<div class="pd-actions">
+					<a href="/iletisim" class="btn btn-primary">Teklif Al</a>
+					<a href={`/${category.slug}`} class="pd-back">{category.title} →</a>
+				</div>
+			</div>
+
+			{
+				visual && (
+					<figure class={media.render ? "pd-visual is-render" : "pd-visual"} data-reveal="right">
+						<span class="pd-visual-grid" aria-hidden="true" />
+						<img src={visual} alt={product.title} width="1100" height="800" decoding="async" />
+						<figcaption>
+							<span>{category.title}</span>
+							<strong>{product.title}</strong>
+						</figcaption>
+					</figure>
+				)
+			}
+		</div>
+	</section>
+
+	{
+		product.features && (
+			<section class="pd-features">
+				<div class="container">
+					<header class="pd-section-head" data-reveal>
+						<span class="pd-kicker">Temel özellikler</span>
+						<h2>Tasarımda öne çıkanlar</h2>
+					</header>
+					<ol class="pd-feature-list">
+						{product.features.map((feature, i) => (
+							<li class="pd-feature" data-reveal style={`--reveal-delay: ${(i % 3) * 90}ms`}>
+								<span class="pd-feature-num">{String(i + 1).padStart(2, "0")}</span>
+								<h3>{feature.title}</h3>
+								<p>{feature.body}</p>
+							</li>
+						))}
+					</ol>
+				</div>
+			</section>
+		)
+	}
+
+	{
+		(product.specs || product.types) && (
+			<section class="pd-specs">
+				<div class="container pd-specs-grid">
+					{product.specs && (
+						<div data-reveal="left">
+							<span class="pd-kicker">Teknik özellikler</span>
+							<h2>Değer aralıkları</h2>
+							<dl class="pd-table">
+								{product.specs.map((row) => (
+									<div>
+										<dt>{row.label}</dt>
+										<dd>{row.value}</dd>
+									</div>
+								))}
+							</dl>
+							<p class="pd-note">Tüm teknik değerler projenize özel olarak revize edilir.</p>
+						</div>
+					)}
+					{product.types && (
+						<div data-reveal="right">
+							<span class="pd-kicker">Tipler</span>
+							<h2>Uygulamaya göre seçim</h2>
+							<dl class="pd-table">
+								{product.types.map((row) => (
+									<div>
+										<dt>{row.label}</dt>
+										<dd>{row.value}</dd>
+									</div>
+								))}
+							</dl>
+						</div>
+					)}
+				</div>
+			</section>
+		)
+	}
+
+	{
+		(product.applications || product.edge) && (
+			<section class="pd-use">
+				<div class="container pd-use-grid">
+					{product.applications && (
+						<div data-reveal="left">
+							<span class="pd-kicker">Kullanım alanları</span>
+							<h2>Hangi sektörlerde?</h2>
+							<ul class="pd-apps">
+								{product.applications.map((item) => (
+									<li>{item}</li>
+								))}
+							</ul>
+						</div>
+					)}
+					{product.edge && (
+						<blockquote class="pd-edge" data-reveal="right">
+							<span class="pd-edge-label">Rekabet avantajı</span>
+							<p>{product.edge}</p>
+						</blockquote>
+					)}
+				</div>
+			</section>
+		)
+	}
+
+	{
+		media.gallery.length > 0 && (
+			<section class="pd-gallery" data-gallery>
+				<div class="container">
+					<header class="pd-section-head" data-reveal>
+						<span class="pd-kicker">Sahadan</span>
+						<h2>İmalat ve uygulama görselleri</h2>
+					</header>
+					<ul class="pd-gallery-grid">
+						{media.gallery.map((src, i) => (
+							<li data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+								<button type="button" class="pd-shot" data-gallery-item={src} aria-label={`${product.title} görsel ${i + 1}`}>
+									<img src={src} alt="" width="1400" height="1050" loading="lazy" decoding="async" />
+								</button>
+							</li>
+						))}
+					</ul>
+				</div>
+				<dialog class="pd-lightbox" data-gallery-dialog>
+					<img src="" alt="" data-gallery-image />
+					<button type="button" class="pd-lightbox-close" data-gallery-close aria-label="Kapat">×</button>
+				</dialog>
+			</section>
+		)
+	}
 
 	{
 		related.length > 0 && (
-			<LinkCards
-				heading="İlgili çözümler"
-				items={related.map((item) => ({
-					title: item.title,
-					text: item.intro,
-					href: productHref(category, item),
-				}))}
-			/>
+			<section class="pd-related">
+				<div class="container">
+					<LinkCards
+						heading={`${category.title} grubunda diğer çözümler`}
+						items={related.map((item) => {
+							const itemMedia = productMedia(item);
+							return {
+								title: item.title,
+								text: item.intro,
+								href: productHref(category, item),
+								image: itemMedia.gallery[0] ?? itemMedia.hero,
+							};
+						})}
+					/>
+				</div>
+			</section>
 		)
 	}
 </PageShell>
 
+<script>
+	for (const root of document.querySelectorAll<HTMLElement>("[data-gallery]")) {
+		const dialog = root.querySelector<HTMLDialogElement>("[data-gallery-dialog]");
+		const image = root.querySelector<HTMLImageElement>("[data-gallery-image]");
+		if (!dialog || !image) continue;
+
+		root.querySelectorAll<HTMLButtonElement>("[data-gallery-item]").forEach((item) => {
+			item.addEventListener("click", () => {
+				image.src = item.dataset.galleryItem ?? "";
+				dialog.showModal();
+			});
+		});
+
+		root.querySelector("[data-gallery-close]")?.addEventListener("click", () => dialog.close());
+		dialog.addEventListener("click", (event) => {
+			if (event.target === dialog) dialog.close();
+		});
+	}
+</script>
+
 <style>
-	.pending {
-		max-width: 36rem;
-		margin-bottom: var(--space-section);
-		padding: 2rem 2.5rem;
-		border: 1px solid var(--color-border);
-		border-top: 3px solid var(--color-copper);
+	.pd-kicker {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		font-family: var(--font-nav);
+		font-size: 12px;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper);
+	}
+
+	.pd-kicker::before {
+		content: "";
+		width: 1.75rem;
+		height: 2px;
+		background: currentColor;
+	}
+
+	.pd-section-head {
+		margin-bottom: 2.75rem;
+	}
+
+	.pd-section-head h2,
+	.pd-specs h2,
+	.pd-use h2 {
+		margin-top: 0.75rem;
+		font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+	}
+
+	/* Genel bakış */
+	.pd-overview {
+		padding-block: var(--space-section);
+	}
+
+	.pd-overview-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+		gap: clamp(2.5rem, 6vw, 5.5rem);
+		align-items: center;
+	}
+
+	.pd-headline {
+		margin: 0.9rem 0 1.5rem;
+		font-size: clamp(1.6rem, 2.8vw, 2.25rem);
+		line-height: 1.2;
+	}
+
+	.pd-copy > p {
+		margin-top: 1rem;
 		color: var(--color-text-muted);
 	}
 
-	.pending h2 {
-		margin-bottom: 0.5rem;
-		font-size: 1.5rem;
+	.pd-purpose {
+		margin-top: 2rem;
+		padding: 1.5rem 1.75rem;
+		border-left: 3px solid var(--color-copper);
+		background: #f6f3ef;
+	}
+
+	.pd-purpose-label {
+		font-family: var(--font-heading);
+		font-size: 0.8125rem;
+		font-weight: 700;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		color: var(--color-copper);
+	}
+
+	.pd-purpose p {
+		margin-top: 0.4rem;
+		color: var(--color-charcoal);
+	}
+
+	.pd-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 2rem;
+		margin-top: 2.25rem;
+	}
+
+	.pd-back {
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: var(--color-charcoal);
+		background: linear-gradient(var(--color-copper), var(--color-copper)) left bottom / 0 2px no-repeat;
+		transition:
+			background-size 0.4s ease,
+			color var(--transition);
+	}
+
+	.pd-back:hover {
+		color: var(--color-copper);
+		background-size: 100% 2px;
+	}
+
+	.pd-visual {
+		position: relative;
+		margin: 0;
+		aspect-ratio: 4 / 3.4;
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		isolation: isolate;
+	}
+
+	.pd-visual-grid {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background:
+			radial-gradient(circle at 60% 40%, rgba(178, 105, 40, 0.28), transparent 60%),
+			linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 40px 40px,
+			linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 40px 40px;
+	}
+
+	.pd-visual img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.pd-visual.is-render img {
+		padding: 8% 8% 18%;
+		object-fit: contain;
+		filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45));
+	}
+
+	.pd-visual:hover img {
+		transform: scale(1.04);
+	}
+
+	.pd-visual figcaption {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
+		padding: 1.1rem 1.5rem;
+		background: var(--color-copper);
+		color: var(--color-text-inverse);
+	}
+
+	.pd-visual figcaption span {
+		font-family: var(--font-nav);
+		font-size: 10px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		opacity: 0.8;
+	}
+
+	.pd-visual figcaption strong {
+		font-family: var(--font-heading);
+		font-size: 1.125rem;
+		text-transform: uppercase;
+	}
+
+	/* Özellikler */
+	.pd-features {
+		padding-block: var(--space-section);
+		background: #f6f3ef;
+	}
+
+	.pd-feature-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+		gap: 1px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		background: var(--color-border);
+		border: 1px solid var(--color-border);
+	}
+
+	.pd-feature {
+		position: relative;
+		padding: 2.25rem 2rem;
+		background: var(--color-surface);
+		transition: background-color 0.4s ease;
+	}
+
+	.pd-feature::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 3px;
+		background: var(--color-copper);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+	}
+
+	.pd-feature:hover::before {
+		transform: scaleX(1);
+	}
+
+	.pd-feature-num {
+		font-family: var(--font-heading);
+		font-size: 2.25rem;
+		font-weight: 700;
+		line-height: 1;
+		color: transparent;
+		-webkit-text-stroke: 1px var(--color-copper);
+	}
+
+	.pd-feature h3 {
+		margin-top: 1rem;
+		font-size: 1.125rem;
+		text-transform: uppercase;
+	}
+
+	.pd-feature p {
+		margin-top: 0.5rem;
+		font-size: 0.9375rem;
+		color: var(--color-text-muted);
+	}
+
+	/* Teknik tablo */
+	.pd-specs {
+		padding-block: var(--space-section);
+		background: var(--color-charcoal);
+		color: var(--color-text-inverse);
+	}
+
+	.pd-specs h2 {
+		color: var(--color-text-inverse);
+	}
+
+	.pd-specs-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+		gap: clamp(2.5rem, 6vw, 5rem);
+	}
+
+	.pd-table {
+		margin: 2rem 0 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.14);
+	}
+
+	.pd-table > div {
+		display: grid;
+		grid-template-columns: minmax(9rem, 0.8fr) 1.2fr;
+		gap: 1.5rem;
+		padding: 1rem 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+		transition:
+			background-color 0.3s ease,
+			padding 0.3s ease;
+	}
+
+	.pd-table > div:hover {
+		padding-inline: 0.75rem;
+		background: rgba(178, 105, 40, 0.12);
+	}
+
+	.pd-table dt {
+		font-family: var(--font-heading);
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.pd-table dd {
+		margin: 0;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.pd-note {
+		margin-top: 1.25rem;
+		font-size: 0.8125rem;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	/* Kullanım alanları */
+	.pd-use {
+		padding-block: var(--space-section);
+	}
+
+	.pd-use-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		gap: clamp(2.5rem, 6vw, 5rem);
+		align-items: center;
+	}
+
+	.pd-apps {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+		gap: 0.75rem;
+		margin: 2rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.pd-apps li {
+		position: relative;
+		padding: 0.9rem 1rem 0.9rem 2.5rem;
+		border: 1px solid var(--color-border);
+		font-size: 0.9375rem;
+		color: var(--color-charcoal);
+		transition:
+			border-color var(--transition),
+			transform 0.3s ease;
+	}
+
+	.pd-apps li::before {
+		content: "";
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		width: 0.5rem;
+		height: 0.5rem;
+		border: 2px solid var(--color-copper);
+		transform: translateY(-50%) rotate(45deg);
+	}
+
+	.pd-apps li:hover {
+		border-color: var(--color-copper);
+		transform: translateX(4px);
+	}
+
+	.pd-edge {
+		position: relative;
+		margin: 0;
+		padding: 2.75rem 2.5rem;
+		background: var(--color-charcoal-deep);
+		color: var(--color-text-inverse);
+		overflow: hidden;
+	}
+
+	.pd-edge::before {
+		content: "”";
+		position: absolute;
+		right: 1.5rem;
+		top: -1.5rem;
+		font-family: Georgia, serif;
+		font-size: 10rem;
+		line-height: 1;
+		color: rgba(178, 105, 40, 0.25);
+	}
+
+	.pd-edge-label {
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.pd-edge p {
+		position: relative;
+		margin-top: 1rem;
+		font-family: var(--font-heading);
+		font-size: 1.1875rem;
+		line-height: 1.55;
+	}
+
+	/* Galeri */
+	.pd-gallery {
+		padding-block: var(--space-section);
+		background: #f6f3ef;
+	}
+
+	.pd-gallery-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		grid-auto-rows: clamp(10rem, 18vw, 15rem);
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.pd-gallery-grid li:first-child {
+		grid-column: span 2;
+		grid-row: span 2;
+	}
+
+	/* Görsel sayısı 2-4 arasında değişir; büyük karenin yanında boşluk kalmasın. */
+	.pd-gallery-grid li:nth-child(4):last-child,
+	.pd-gallery-grid li:nth-child(2):nth-last-child(2),
+	.pd-gallery-grid li:nth-child(3):last-child,
+	.pd-gallery-grid li:nth-child(2):last-child {
+		grid-column: span 2;
+	}
+
+	.pd-gallery-grid li:nth-child(2):last-child {
+		grid-row: span 2;
+	}
+
+	.pd-shot {
+		position: relative;
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: 12rem;
+		padding: 0;
+		border: 0;
+		overflow: hidden;
+		background: var(--color-charcoal);
+		cursor: zoom-in;
+	}
+
+	.pd-shot::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border: 0 solid var(--color-copper);
+		transition: border-width 0.3s ease;
+	}
+
+	.pd-shot img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition:
+			transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+			filter 0.5s ease;
+	}
+
+	.pd-shot:hover img {
+		transform: scale(1.07);
+		filter: brightness(1.05);
+	}
+
+	.pd-shot:hover::after {
+		border-width: 4px;
+	}
+
+	.pd-lightbox {
+		max-width: min(92vw, 80rem);
+		max-height: 90vh;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		overflow: visible;
+	}
+
+	.pd-lightbox::backdrop {
+		background: rgba(10, 10, 10, 0.88);
+	}
+
+	.pd-lightbox img {
+		display: block;
+		max-width: 100%;
+		max-height: 90vh;
+		object-fit: contain;
+	}
+
+	.pd-lightbox-close {
+		position: absolute;
+		top: -1rem;
+		right: -1rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 0;
+		background: var(--color-copper);
+		color: #fff;
+		font-size: 1.75rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.pd-related {
+		padding-block: var(--space-section);
+	}
+
+	@media (max-width: 60rem) {
+		.pd-overview-grid,
+		.pd-use-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.pd-gallery-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 34rem) {
+		.pd-table > div {
+			grid-template-columns: 1fr;
+			gap: 0.25rem;
+		}
+
+		.pd-lightbox-close {
+			top: 0.5rem;
+			right: 0.5rem;
+		}
 	}
 </style>

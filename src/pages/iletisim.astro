@@ -1,6 +1,7 @@
 ---
 import PageShell from "../components/PageShell.astro";
 import { site } from "../data/site";
+import { productCategories } from "../data/products";
 ---
 
 <PageShell
@@ -9,62 +10,301 @@ import { site } from "../data/site";
 	eyebrow="Teklif ve keşif"
 	intro="İhtiyacınızı anlatın; sistem seçimini, mühendisliğini ve sahada devreye almayı birlikte planlayalım."
 	image="/images/home/cta-helezon-1200.webp"
+	bare
+	cta={false}
 >
-	<dl class="contact">
-		<div>
-			<dt>E-posta</dt>
-			<dd><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></dd>
+	<section class="ct">
+		<div class="container ct-grid">
+			<aside class="ct-info" data-reveal="left">
+				<span class="ct-kicker">Bize ulaşın</span>
+				<h2 class="ct-title">Teklif ve teknik görüşme</h2>
+				<p class="ct-lead">Teklif, keşif veya teknik görüşme için yazın ya da arayın; ekibimiz talebinizi değerlendirip size dönüş yapsın.</p>
+
+				<dl class="ct-list">
+					<div>
+						<dt>E-posta</dt>
+						<dd><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></dd>
+					</div>
+					<div>
+						<dt>Telefon</dt>
+						<dd><a href={site.contact.phoneHref}>{site.contact.phone}</a></dd>
+					</div>
+					<div>
+						<dt>Adres</dt>
+						<dd>{site.contact.addressLines.map((line) => <span>{line}</span>)}</dd>
+					</div>
+				</dl>
+			</aside>
+
+			<form class="ct-form" data-contact-form data-reveal="right" novalidate>
+				<span class="ct-kicker">Teklif formu</span>
+				<div class="ct-fields">
+					<label class="ct-field">
+						<span>Ad Soyad *</span>
+						<input name="name" type="text" autocomplete="name" required />
+					</label>
+					<label class="ct-field">
+						<span>Firma</span>
+						<input name="company" type="text" autocomplete="organization" />
+					</label>
+					<label class="ct-field">
+						<span>E-posta *</span>
+						<input name="email" type="email" autocomplete="email" required />
+					</label>
+					<label class="ct-field">
+						<span>Telefon</span>
+						<input name="phone" type="tel" autocomplete="tel" />
+					</label>
+					<label class="ct-field ct-field-wide">
+						<span>İlgilendiğiniz ürün grubu</span>
+						<select name="topic">
+							<option value="">Seçiniz</option>
+							{productCategories.map((category) => <option>{category.title}</option>)}
+							<option>Mühendislik / danışmanlık</option>
+							<option>Bakım / retrofit</option>
+						</select>
+					</label>
+					<label class="ct-field ct-field-wide">
+						<span>Mesajınız *</span>
+						<textarea name="message" rows="5" required placeholder="Malzeme, kapasite, saha ölçüleri gibi bildiğiniz detayları yazabilirsiniz."></textarea>
+					</label>
+				</div>
+				<label class="ct-consent">
+					<input name="consent" type="checkbox" required />
+					<span><a href="/kvkk">KVKK aydınlatma metnini</a> okudum, bilgilerimin talebim için işlenmesini kabul ediyorum.</span>
+				</label>
+				<p class="ct-error" data-contact-error hidden>Lütfen zorunlu alanları doldurun ve onay kutusunu işaretleyin.</p>
+				<button type="submit" class="btn btn-primary">Gönder</button>
+			</form>
 		</div>
-		<div>
-			<dt>Telefon</dt>
-			<dd><a href={site.contact.phoneHref}>{site.contact.phone}</a></dd>
-		</div>
-		<div>
-			<dt>Adres</dt>
-			<dd>{site.contact.addressLines.map((line) => <span>{line}</span>)}</dd>
-		</div>
-	</dl>
+	</section>
 </PageShell>
 
+<script define:vars={{ email: site.contact.email }}>
+	const form = document.querySelector("[data-contact-form]");
+	const error = document.querySelector("[data-contact-error]");
+
+	form?.addEventListener("submit", (event) => {
+		event.preventDefault();
+		if (!form.checkValidity()) {
+			error.hidden = false;
+			form.querySelector(":invalid")?.focus();
+			return;
+		}
+		error.hidden = true;
+
+		const data = new FormData(form);
+		const lines = [
+			`Ad Soyad: ${data.get("name")}`,
+			`Firma: ${data.get("company") || "-"}`,
+			`E-posta: ${data.get("email")}`,
+			`Telefon: ${data.get("phone") || "-"}`,
+			`Ürün grubu: ${data.get("topic") || "-"}`,
+			"",
+			String(data.get("message")),
+		];
+		const subject = `Teklif talebi – ${data.get("company") || data.get("name")}`;
+		window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+	});
+</script>
+
 <style>
-	.contact {
+	.ct {
+		padding-block: var(--space-section);
+	}
+
+	.ct-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-		gap: 1.5rem;
-		margin: 0;
+		grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+		gap: clamp(2.5rem, 6vw, 5rem);
+		align-items: start;
 	}
 
-	.contact > div {
-		padding: 2rem;
-		border: 1px solid var(--color-border);
-		border-top: 3px solid var(--color-copper);
-	}
-
-	.contact dt {
+	.ct-kicker {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
 		font-family: var(--font-nav);
-		font-size: 11px;
-		letter-spacing: 1.5px;
+		font-size: 12px;
+		letter-spacing: 2px;
 		text-transform: uppercase;
 		color: var(--color-copper);
 	}
 
-	.contact dd {
+	.ct-kicker::before {
+		content: "";
+		width: 1.75rem;
+		height: 2px;
+		background: currentColor;
+	}
+
+	.ct-title {
+		margin-top: 0.75rem;
+		font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+	}
+
+	.ct-lead {
+		margin-top: 1rem;
+		color: var(--color-text-muted);
+	}
+
+	.ct-list {
+		margin: 2rem 0 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.ct-list > div {
+		position: relative;
+		padding: 1.25rem 0 1.25rem 1.5rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.ct-list > div::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 1.6rem;
+		width: 0.5rem;
+		height: 0.5rem;
+		border: 2px solid var(--color-copper);
+		transform: rotate(45deg);
+	}
+
+	.ct-list dt {
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.ct-list dd {
 		display: flex;
 		flex-direction: column;
-		margin: 0.5rem 0 0;
+		margin: 0.35rem 0 0;
 		font-family: var(--font-heading);
-		font-size: 1.25rem;
+		font-size: 1.1875rem;
 		font-weight: 600;
 		line-height: 1.4;
 		color: var(--color-charcoal);
 	}
 
-	.contact a {
+	.ct-list a {
 		text-decoration: none;
-		transition: color var(--transition);
+		background: linear-gradient(var(--color-copper), var(--color-copper)) left bottom / 0 2px no-repeat;
+		transition:
+			background-size 0.4s ease,
+			color var(--transition);
 	}
 
-	.contact a:hover {
+	.ct-list a:hover {
 		color: var(--color-copper);
+		background-size: 100% 2px;
+	}
+
+	.ct-form {
+		padding: clamp(1.75rem, 4vw, 3rem);
+		background: var(--color-charcoal);
+		color: var(--color-text-inverse);
+	}
+
+	.ct-fields {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.25rem;
+		margin-top: 1.75rem;
+	}
+
+	.ct-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+
+	.ct-field-wide {
+		grid-column: 1 / -1;
+	}
+
+	.ct-field > span {
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.65);
+	}
+
+	.ct-field input,
+	.ct-field select,
+	.ct-field textarea {
+		width: 100%;
+		padding: 0.8rem 0;
+		border: 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+		border-radius: 0;
+		background: transparent;
+		font: inherit;
+		color: #fff;
+		transition: border-color var(--transition);
+	}
+
+	.ct-field select option {
+		color: var(--color-charcoal);
+	}
+
+	.ct-field textarea {
+		resize: vertical;
+	}
+
+	.ct-field ::placeholder {
+		color: rgba(255, 255, 255, 0.35);
+	}
+
+	.ct-field input:focus,
+	.ct-field select:focus,
+	.ct-field textarea:focus {
+		outline: none;
+		border-bottom-color: var(--color-copper-bright);
+	}
+
+	.ct-consent {
+		display: flex;
+		gap: 0.75rem;
+		margin-top: 1.5rem;
+		font-size: 0.875rem;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.ct-consent input {
+		flex: none;
+		width: 1.1rem;
+		height: 1.1rem;
+		margin-top: 0.2rem;
+		accent-color: var(--color-copper);
+	}
+
+	.ct-consent a {
+		color: var(--color-copper-bright);
+	}
+
+	.ct-error {
+		margin-top: 1rem;
+		font-size: 0.875rem;
+		color: #f0a36a;
+	}
+
+	.ct-form .btn {
+		margin-top: 1.75rem;
+	}
+
+	@media (max-width: 60rem) {
+		.ct-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 34rem) {
+		.ct-fields {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

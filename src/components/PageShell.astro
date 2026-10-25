@@ -13,6 +13,9 @@ interface Props {
 	intro?: string;
 	image?: string;
 	crumbs?: Crumb[];
+	/** Gövdeyi container ve dikey boşluk olmadan basar; sayfa kendi bantlarını kurar. */
+	bare?: boolean;
+	cta?: boolean;
 }
 
 const {
@@ -21,6 +24,8 @@ const {
 	eyebrow,
 	intro,
 	image = "/images/home/hero-roll-form-1200.webp",
+	bare = false,
+	cta = true,
 	crumbs = [{ label: "Ana Sayfa", href: "/" }, { label: title, href: null }],
 } = Astro.props;
 
@@ -46,28 +51,38 @@ const hasBody = Astro.slots.has("default");
 		</div>
 	</section>
 
-	<section class="page-body">
-		<div class="container">
-			{
-				hasBody ? (
-					<slot />
-				) : (
-					<div class="page-pending">
-						<span class="page-pending-mark" aria-hidden="true" />
-						<h2 class="page-pending-title">İçerik hazırlanıyor</h2>
-						<p>Bu sayfanın ayrıntılı içeriği yakında burada olacak.</p>
-					</div>
-				)
-			}
-		</div>
-	</section>
+	{
+		bare ? (
+			<slot />
+		) : (
+			<section class="page-body">
+				<div class="container">
+					{
+						hasBody ? (
+							<slot />
+						) : (
+							<div class="page-pending">
+								<span class="page-pending-mark" aria-hidden="true" />
+								<h2 class="page-pending-title">İçerik hazırlanıyor</h2>
+								<p>Bu sayfanın ayrıntılı içeriği yakında burada olacak.</p>
+							</div>
+						)
+					}
+				</div>
+			</section>
+		)
+	}
 
-	<section class="page-cta">
-		<div class="container page-cta-inner">
-			<h2 class="page-cta-title">Projenizi konuşalım</h2>
-			<a href="/iletisim" class="btn btn-primary">Teklif Al</a>
-		</div>
-	</section>
+	{
+		cta && (
+			<section class="page-cta">
+				<div class="container page-cta-inner">
+					<h2 class="page-cta-title">Projenizi konuşalım</h2>
+					<a href="/iletisim" class="btn btn-primary">Teklif Al</a>
+				</div>
+			</section>
+		)
+	}
 </BaseLayout>
 
 <style>

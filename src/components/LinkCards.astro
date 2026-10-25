@@ -2,7 +2,7 @@
 /** İç sayfalarda alt kategori / ilgili ürün linkleri için kart ızgarası. */
 interface Props {
 	heading: string;
-	items: { title: string; text: string; href: string }[];
+	items: { title: string; text: string; href: string; image?: string }[];
 }
 
 const { heading, items } = Astro.props;
@@ -12,8 +12,13 @@ const { heading, items } = Astro.props;
 <ul class="link-cards">
 	{
 		items.map((item, i) => (
-			<li>
-				<a href={item.href} class="link-card">
+			<li data-reveal style={`--reveal-delay: ${(i % 3) * 90}ms`}>
+				<a href={item.href} class={item.image ? "link-card has-media" : "link-card"}>
+					{item.image && (
+						<span class="link-card-media">
+							<img src={item.image} alt="" width="640" height="420" loading="lazy" decoding="async" />
+						</span>
+					)}
 					<span class="link-card-num">{String(i + 1).padStart(2, "0")}</span>
 					<span class="link-card-title">{item.title}</span>
 					<span class="link-card-text">{item.text}</span>
@@ -72,6 +77,29 @@ const { heading, items } = Astro.props;
 
 	.link-card:hover::before {
 		transform: scaleX(1);
+	}
+
+	.link-card.has-media {
+		padding-top: 0;
+	}
+
+	.link-card-media {
+		display: block;
+		margin: 0 -1.75rem 1.5rem;
+		aspect-ratio: 16 / 10;
+		overflow: hidden;
+		background: var(--color-charcoal);
+	}
+
+	.link-card-media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.link-card:hover .link-card-media img {
+		transform: scale(1.06);
 	}
 
 	.link-card-num {

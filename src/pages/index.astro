@@ -101,10 +101,6 @@ const sectors = [
 	description="Konveyör ve taşıma sistemleri, roll form hatları, özel makineler, çelik konstrüksiyonlar, kalıplar ve eleme sistemleri. İhtiyacı analiz ediyor, mühendisliğini yapıyor ve sahada çalışan bir sisteme dönüştürüyoruz."
 	image="/images/home/hero-roll-form-1200.webp"
 >
-	<script is:inline>
-		document.documentElement.classList.add("js-motion");
-	</script>
-
 	<HomeHero />
 
 	<!-- Hero'ya binen şerit -->
@@ -469,57 +465,6 @@ const sectors = [
 		</div>
 	</section>
 </BaseLayout>
-
-<script>
-	import "../scripts/home-motion";
-</script>
-
-<style is:global>
-	/* Görünür olunca açılma. Sınıf yalnızca JS çalışınca eklenir; JS yoksa
-	   içerik gizlenmez. */
-	.js-motion [data-reveal] {
-		opacity: 0;
-		transform: translate3d(0, 34px, 0);
-		transition:
-			opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
-			transform 1s cubic-bezier(0.2, 0.7, 0.2, 1),
-			clip-path 1.2s cubic-bezier(0.7, 0, 0.2, 1);
-		transition-delay: var(--reveal-delay, 0ms);
-	}
-
-	.js-motion [data-reveal="left"] {
-		transform: translate3d(-60px, 0, 0);
-	}
-
-	.js-motion [data-reveal="right"] {
-		transform: translate3d(60px, 0, 0);
-	}
-
-	.js-motion [data-reveal="wipe"] {
-		opacity: 1;
-		transform: none;
-		clip-path: inset(0 100% 0 0);
-	}
-
-	.js-motion [data-reveal].is-visible {
-		opacity: 1;
-		transform: none;
-	}
-
-	/* clip-path yalnızca wipe'ta; aksi halde taşan işaretler kırpılır. */
-	.js-motion [data-reveal="wipe"].is-visible {
-		clip-path: inset(0 0 0 0);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.js-motion [data-reveal] {
-			opacity: 1;
-			transform: none;
-			clip-path: none;
-			transition: none;
-		}
-	}
-</style>
 
 <style>
 	/* Çapa linkleri yapışkan menü şeridinin (38px) altında kalmasın. */

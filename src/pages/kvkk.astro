@@ -1,9 +1,165 @@
 ---
 import PageShell from "../components/PageShell.astro";
+import { site } from "../data/site";
+
+const sections = [
+	{
+		title: "Veri sorumlusu",
+		body: [
+			`6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca kişisel verileriniz, veri sorumlusu sıfatıyla Makinend tarafından aşağıda açıklanan kapsamda işlenmektedir.`,
+		],
+	},
+	{
+		title: "İşlenen kişisel veriler",
+		body: [
+			"İletişim formu, e-posta ve telefon yoluyla bize ilettiğiniz ad-soyad, firma, e-posta adresi, telefon numarası ve talep içeriği; web sitesini ziyaretiniz sırasında oluşan teknik kayıtlar (IP adresi, tarayıcı bilgisi, ziyaret zamanı).",
+		],
+	},
+	{
+		title: "İşleme amaçları",
+		body: [
+			"Teklif ve bilgi taleplerinizi yanıtlamak, keşif ve teknik görüşme planlamak, sözleşme süreçlerini yürütmek, satış sonrası destek sağlamak, yasal yükümlülükleri yerine getirmek ve web sitesinin güvenliğini sağlamak.",
+		],
+	},
+	{
+		title: "Hukuki sebepler ve toplama yöntemi",
+		body: [
+			"Kişisel verileriniz; web sitesi formları, e-posta ve telefon kanallarıyla elektronik ortamda toplanır. KVKK'nın 5. maddesinde yer alan sözleşmenin kurulması veya ifası, hukuki yükümlülüğün yerine getirilmesi, meşru menfaat ve gerektiğinde açık rıza hukuki sebeplerine dayanılarak işlenir.",
+		],
+	},
+	{
+		title: "Aktarım",
+		body: [
+			"Kişisel verileriniz yalnızca yukarıdaki amaçlarla sınırlı olarak; yasal zorunluluk halinde yetkili kamu kurumlarıyla ve hizmet aldığımız barındırma, e-posta ve iş ortaklarıyla KVKK'nın 8. ve 9. maddelerine uygun şekilde paylaşılabilir.",
+		],
+	},
+	{
+		title: "Haklarınız",
+		body: [
+			"KVKK'nın 11. maddesi uyarınca; verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, işleme amacını öğrenme, aktarıldığı üçüncü kişileri bilme, eksik veya yanlış işlenmişse düzeltilmesini, şartları oluştuğunda silinmesini veya yok edilmesini isteme, otomatik sistemlerle analiz sonucu aleyhinize bir sonuca itiraz etme ve kanuna aykırı işleme nedeniyle zarara uğramanız halinde zararın giderilmesini talep etme haklarına sahipsiniz.",
+		],
+	},
+	{
+		title: "Başvuru",
+		body: [
+			`Haklarınıza ilişkin taleplerinizi ${site.contact.email} adresine e-posta ile veya ${site.contact.addressLines.join(", ")} adresine yazılı olarak iletebilirsiniz. Başvurular en geç otuz gün içinde sonuçlandırılır.`,
+		],
+	},
+];
 ---
 
 <PageShell
 	title="KVKK Aydınlatma Metni"
-	description="Makinend kişisel verilerin korunması aydınlatma metni."
-	image="/images/home/parallax-bunker-1200.webp"
-/>
+	description="Makinend kişisel verilerin korunması ve işlenmesine ilişkin aydınlatma metni."
+	eyebrow="Yasal"
+	intro="Kişisel verilerinizin hangi amaçla ve nasıl işlendiğini, haklarınızı ve başvuru yollarını bu metinde bulabilirsiniz."
+	image="/images/home/band-muhendislik.webp"
+>
+	<div class="legal">
+		<nav class="legal-toc" aria-label="İçindekiler">
+			<span>İçindekiler</span>
+			<ol>
+				{sections.map((section, i) => <li><a href={`#kvkk-${i + 1}`}>{section.title}</a></li>)}
+			</ol>
+		</nav>
+		<div class="legal-body">
+			{
+				sections.map((section, i) => (
+					<section id={`kvkk-${i + 1}`}>
+						<h2>
+							<span>{String(i + 1).padStart(2, "0")}</span>
+							{section.title}
+						</h2>
+						{section.body.map((paragraph) => <p>{paragraph}</p>)}
+					</section>
+				))
+			}
+		</div>
+	</div>
+</PageShell>
+
+<style>
+	.legal {
+		display: grid;
+		grid-template-columns: 16rem minmax(0, 1fr);
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: start;
+	}
+
+	.legal-toc {
+		position: sticky;
+		top: 5rem;
+		padding: 1.5rem;
+		border: 1px solid var(--color-border);
+		border-top: 3px solid var(--color-copper);
+	}
+
+	.legal-toc > span {
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: var(--color-copper);
+	}
+
+	.legal-toc ol {
+		margin: 0.75rem 0 0;
+		padding-left: 1.1rem;
+		font-size: 0.875rem;
+	}
+
+	.legal-toc li + li {
+		margin-top: 0.4rem;
+	}
+
+	.legal-toc a {
+		text-decoration: none;
+		color: var(--color-text-muted);
+		transition: color var(--transition);
+	}
+
+	.legal-toc a:hover {
+		color: var(--color-copper);
+	}
+
+	.legal-body {
+		max-width: 46rem;
+	}
+
+	.legal-body section {
+		scroll-margin-top: 5rem;
+	}
+
+	.legal-body section + section {
+		margin-top: 2.5rem;
+		padding-top: 2.5rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.legal-body h2 {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		font-size: 1.375rem;
+	}
+
+	.legal-body h2 span {
+		font-size: 0.875rem;
+		color: var(--color-copper);
+	}
+
+	.legal-body p {
+		margin-top: 0.85rem;
+		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 52rem) {
+		.legal {
+			grid-template-columns: 1fr;
+		}
+
+		.legal-toc {
+			position: static;
+		}
+	}
+</style>
