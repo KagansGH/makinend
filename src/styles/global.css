@@ -161,13 +161,35 @@ img {
 		color var(--transition);
 }
 
+/* Header'daki Teklif Al ile aynı: bakır dolgu yazının arkasında durur,
+   hover'da sola çekilir. Kenarlık, dolgu çekilince buton formunu korur. */
 .btn-primary {
-	background: var(--color-copper);
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	background: transparent;
+	border-color: var(--color-copper);
 	color: var(--color-text-inverse);
+	transition: color 0.45s ease;
+}
+
+.btn-primary::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: var(--color-copper);
+	transform: scaleX(1);
+	transform-origin: left center;
+	transition: transform 0.45s ease;
 }
 
 .btn-primary:hover {
-	background: var(--color-copper-bright);
+	color: var(--color-copper);
+}
+
+.btn-primary:hover::before {
+	transform: scaleX(0);
 }
 
 .btn-ghost {

@@ -1,0 +1,70 @@
+---
+import PageShell from "../components/PageShell.astro";
+import { site } from "../data/site";
+---
+
+<PageShell
+	title="İletişim"
+	description="Makinend ile iletişime geçin: teklif, keşif ve teknik görüşme."
+	eyebrow="Teklif ve keşif"
+	intro="İhtiyacınızı anlatın; sistem seçimini, mühendisliğini ve sahada devreye almayı birlikte planlayalım."
+	image="/images/home/cta-helezon-1200.webp"
+>
+	<dl class="contact">
+		<div>
+			<dt>E-posta</dt>
+			<dd><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></dd>
+		</div>
+		<div>
+			<dt>Telefon</dt>
+			<dd><a href={site.contact.phoneHref}>{site.contact.phone}</a></dd>
+		</div>
+		<div>
+			<dt>Adres</dt>
+			<dd>{site.contact.addressLines.map((line) => <span>{line}</span>)}</dd>
+		</div>
+	</dl>
+</PageShell>
+
+<style>
+	.contact {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		gap: 1.5rem;
+		margin: 0;
+	}
+
+	.contact > div {
+		padding: 2rem;
+		border: 1px solid var(--color-border);
+		border-top: 3px solid var(--color-copper);
+	}
+
+	.contact dt {
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		color: var(--color-copper);
+	}
+
+	.contact dd {
+		display: flex;
+		flex-direction: column;
+		margin: 0.5rem 0 0;
+		font-family: var(--font-heading);
+		font-size: 1.25rem;
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--color-charcoal);
+	}
+
+	.contact a {
+		text-decoration: none;
+		transition: color var(--transition);
+	}
+
+	.contact a:hover {
+		color: var(--color-copper);
+	}
+</style>

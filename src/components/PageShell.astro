@@ -1,0 +1,242 @@
+---
+/**
+ * İç sayfa iskeleti: görselli koyu hero, breadcrumb, gövde ve teklif şeridi.
+ * Gövde içeriği slot'tan gelir; slot boşsa "içerik hazırlanıyor" bloğu basılır.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import type { Crumb } from "../data/products";
+
+interface Props {
+	title: string;
+	description: string;
+	eyebrow?: string;
+	intro?: string;
+	image?: string;
+	crumbs?: Crumb[];
+}
+
+const {
+	title,
+	description,
+	eyebrow,
+	intro,
+	image = "/images/home/hero-roll-form-1200.webp",
+	crumbs = [{ label: "Ana Sayfa", href: "/" }, { label: title, href: null }],
+} = Astro.props;
+
+const hasBody = Astro.slots.has("default");
+---
+
+<BaseLayout title={`${title} | Makinend`} description={description} image={image}>
+	<section class="page-hero">
+		<img class="page-hero-bg" src={image} alt="" width="1200" height="675" decoding="async" />
+		<div class="container page-hero-inner">
+			<nav class="crumbs" aria-label="Sayfa yolu">
+				<ol>
+					{
+						crumbs.map((crumb) => (
+							<li>{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span>{crumb.label}</span>}</li>
+						))
+					}
+				</ol>
+			</nav>
+			{eyebrow && <span class="page-eyebrow">{eyebrow}</span>}
+			<h1 class="page-title">{title}</h1>
+			{intro && <p class="page-intro">{intro}</p>}
+		</div>
+	</section>
+
+	<section class="page-body">
+		<div class="container">
+			{
+				hasBody ? (
+					<slot />
+				) : (
+					<div class="page-pending">
+						<span class="page-pending-mark" aria-hidden="true" />
+						<h2 class="page-pending-title">İçerik hazırlanıyor</h2>
+						<p>Bu sayfanın ayrıntılı içeriği yakında burada olacak.</p>
+					</div>
+				)
+			}
+		</div>
+	</section>
+
+	<section class="page-cta">
+		<div class="container page-cta-inner">
+			<h2 class="page-cta-title">Projenizi konuşalım</h2>
+			<a href="/iletisim" class="btn btn-primary">Teklif Al</a>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.page-hero {
+		position: relative;
+		padding-block: clamp(4rem, 9vw, 7rem);
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		isolation: isolate;
+	}
+
+	.page-hero::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: linear-gradient(90deg, rgba(14, 14, 14, 0.92), rgba(14, 14, 14, 0.6));
+	}
+
+	.page-hero-bg {
+		position: absolute;
+		inset: 0;
+		z-index: -2;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: saturate(0.75);
+		animation: page-zoom 12s ease-out both;
+	}
+
+	@keyframes page-zoom {
+		from {
+			transform: scale(1.12);
+		}
+		to {
+			transform: scale(1);
+		}
+	}
+
+	.page-hero-inner > * {
+		animation: page-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+	}
+
+	.page-hero-inner > :nth-child(2) {
+		animation-delay: 0.08s;
+	}
+
+	.page-hero-inner > :nth-child(3) {
+		animation-delay: 0.16s;
+	}
+
+	.page-hero-inner > :nth-child(4) {
+		animation-delay: 0.24s;
+	}
+
+	@keyframes page-in {
+		from {
+			opacity: 0;
+			transform: translateY(18px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.page-hero-bg,
+		.page-hero-inner > * {
+			animation: none;
+		}
+	}
+
+	.crumbs ol {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.6rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.crumbs li + li::before {
+		content: "/";
+		margin-right: 0.6rem;
+		color: var(--color-copper-bright);
+	}
+
+	.crumbs a {
+		text-decoration: none;
+		transition: color var(--transition);
+	}
+
+	.crumbs a:hover {
+		color: var(--color-copper-bright);
+	}
+
+	.page-eyebrow {
+		display: block;
+		margin-top: 2rem;
+		font-family: var(--font-nav);
+		font-size: 12px;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.page-title {
+		max-width: 48rem;
+		margin-top: 0.75rem;
+		font-size: clamp(2rem, 4.5vw, 3.5rem);
+		color: var(--color-text-inverse);
+	}
+
+	.crumbs + .page-title {
+		margin-top: 2rem;
+	}
+
+	.page-intro {
+		max-width: 40rem;
+		margin-top: 1.25rem;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.page-body {
+		padding-block: var(--space-section);
+	}
+
+	.page-pending {
+		max-width: 36rem;
+		padding: 2.5rem;
+		border: 1px solid var(--color-border);
+		border-top: 3px solid var(--color-copper);
+		color: var(--color-text-muted);
+	}
+
+	.page-pending-mark {
+		display: block;
+		width: 0.75rem;
+		height: 0.75rem;
+		margin-bottom: 1.25rem;
+		border: 2px solid var(--color-copper);
+		transform: rotate(45deg);
+	}
+
+	.page-pending-title {
+		margin-bottom: 0.5rem;
+		font-size: 1.5rem;
+	}
+
+	.page-cta {
+		background: var(--color-charcoal-panel);
+	}
+
+	.page-cta-inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding-block: 2.5rem;
+	}
+
+	.page-cta-title {
+		color: var(--color-text-inverse);
+	}
+</style>

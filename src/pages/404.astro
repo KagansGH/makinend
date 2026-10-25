@@ -1,0 +1,34 @@
+---
+import PageShell from "../components/PageShell.astro";
+---
+
+<PageShell
+	title="Sayfa bulunamadı"
+	description="Aradığınız sayfa bulunamadı."
+	eyebrow="404"
+	intro="Aradığınız sayfa taşınmış ya da kaldırılmış olabilir."
+	image="/images/home/cta-helezon-1200.webp"
+>
+	<div class="actions">
+		<a href="/" class="btn btn-primary">Ana sayfaya dön</a>
+		<a href="/#urunler" class="btn btn-outline">Ürün grupları</a>
+	</div>
+</PageShell>
+
+<style>
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.btn-outline {
+		border-color: var(--color-charcoal);
+		color: var(--color-charcoal);
+	}
+
+	.btn-outline:hover {
+		background: var(--color-charcoal);
+		color: var(--color-text-inverse);
+	}
+</style>

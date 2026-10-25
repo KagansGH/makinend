@@ -361,6 +361,14 @@ const slides = scenes.flatMap((scene) => {
 		flex-direction: column;
 		align-items: flex-end;
 		gap: 1.25rem;
+		/* Tam genişlik kutu hero butonlarının üstüne biner; tıklamayı yalnızca
+		   pager ve link alsın. */
+		pointer-events: none;
+	}
+
+	.hero-pager,
+	.hero-scene-link {
+		pointer-events: auto;
 	}
 
 	.hero-pager {

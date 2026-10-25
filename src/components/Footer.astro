@@ -1,31 +1,31 @@
 ---
 import { site } from "../data/site";
+import { categoryHref, productCategories } from "../data/products";
 
 const year = new Date().getFullYear();
 
-/* Faz 2'de bu kolon tam ürün ağacıyla site haritasına dönüşecek. */
 const corporateLinks = [
 	{ label: "Ana Sayfa", href: "/" },
-	{ label: "Projeler", href: "/projeler" },
 	{ label: "Hakkımızda", href: "/hakkimizda" },
+	{ label: "Projeler", href: "/projeler" },
 	{ label: "İletişim", href: "/iletisim" },
+	{ label: "Teklif Al", href: "/iletisim" },
 ];
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" data-footer>
+	<div class="footer-rule" aria-hidden="true"></div>
+
 	<div class="container footer-inner">
-		<div class="footer-col">
-			<img src={site.logo} alt={`${site.name} logosu`} class="footer-logo" />
+		<div class="footer-col footer-brand" style="--i: 0">
+			<a href="/" class="footer-logo-link" aria-label={`${site.name} ana sayfa`}>
+				<img src={site.logo} alt={`${site.name} logosu`} class="footer-logo" />
+			</a>
 			<p class="footer-tagline">{site.tagline}</p>
 			<nav class="footer-social" aria-label="Sosyal medya">
 				{
 					site.socials.map((item) => (
-						<a
-							href={item.href}
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label={item.label}
-						>
+						<a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label}>
 							{item.id === "linkedin" && (
 								<svg viewBox="0 0 24 24" aria-hidden="true">
 									<path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
@@ -47,20 +47,20 @@ const corporateLinks = [
 			</nav>
 		</div>
 
-		<div class="footer-col">
-			<h3 class="footer-heading">İletişim</h3>
-			<ul class="footer-contact">
-				{site.contact.addressLines.map((line) => <li>{line}</li>)}
-				<li>
-					<a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
-				</li>
-				<li>
-					<a href={site.contact.phoneHref}>{site.contact.phone}</a>
-				</li>
+		<div class="footer-col" style="--i: 1">
+			<h3 class="footer-heading">Ürünler</h3>
+			<ul class="footer-links">
+				{
+					productCategories.map((category) => (
+						<li>
+							<a href={categoryHref(category)}>{category.title}</a>
+						</li>
+					))
+				}
 			</ul>
 		</div>
 
-		<div class="footer-col">
+		<div class="footer-col" style="--i: 2">
 			<h3 class="footer-heading">Kurumsal</h3>
 			<ul class="footer-links">
 				{
@@ -72,77 +72,165 @@ const corporateLinks = [
 				}
 			</ul>
 		</div>
+
+		<div class="footer-col" style="--i: 3">
+			<h3 class="footer-heading">İletişim</h3>
+			<ul class="footer-contact">
+				<li>
+					<span class="footer-contact-label">Adres</span>
+					{site.contact.addressLines.map((line) => <span>{line}</span>)}
+				</li>
+				<li>
+					<span class="footer-contact-label">E-posta</span>
+					<a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+				</li>
+				<li>
+					<span class="footer-contact-label">Telefon</span>
+					<a href={site.contact.phoneHref}>{site.contact.phone}</a>
+				</li>
+			</ul>
+		</div>
 	</div>
 
 	<div class="footer-bottom">
-		<div class="container">
-			<p class="footer-copy">&copy; {year} {site.name}</p>
+		<div class="container footer-bottom-inner">
+			<p class="footer-copy">&copy; {year} {site.name}. Tüm hakları saklıdır.</p>
+			<a href="/kvkk" class="footer-legal">KVKK Aydınlatma Metni</a>
 		</div>
 	</div>
 </footer>
 
+<script>
+	const footer = document.querySelector<HTMLElement>("[data-footer]");
+
+	if (footer) {
+		if (!("IntersectionObserver" in window)) {
+			footer.classList.add("is-visible");
+		} else {
+			const observer = new IntersectionObserver(
+				(entries) => {
+					if (!entries.some((entry) => entry.isIntersecting)) return;
+					footer.classList.add("is-visible");
+					observer.disconnect();
+				},
+				{ threshold: 0.15 },
+			);
+			footer.classList.add("is-armed");
+			observer.observe(footer);
+		}
+	}
+</script>
+
 <style>
 	.site-footer {
+		position: relative;
 		background: #f5f5f5;
 		color: #4c4c4c;
 		-webkit-font-smoothing: auto;
 	}
 
-	.footer-inner {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 0;
-		/* Container'ın 40px'i kolonları içeri kaçırıyor; Lightwire 15 + 30. */
-		padding: 80px 15px 70px;
+	/* Görünür olunca üst kenarda bakır çizgi soldan sağa çekilir. */
+	.footer-rule {
+		height: 3px;
+		background: var(--color-copper);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 1.2s cubic-bezier(0.7, 0, 0.2, 1);
 	}
 
-	.footer-col {
-		padding: 0 30px;
+	.site-footer:not(.is-armed) .footer-rule,
+	.site-footer.is-visible .footer-rule {
+		transform: scaleX(1);
+	}
+
+	.footer-inner {
+		display: grid;
+		grid-template-columns: 1.3fr 1fr 0.8fr 1.1fr;
+		gap: 2.5rem;
+		padding-block: clamp(3.5rem, 7vw, 5rem);
+	}
+
+	.site-footer.is-armed .footer-col {
+		opacity: 0;
+		transform: translateY(24px);
+		transition:
+			opacity 0.8s ease,
+			transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+		transition-delay: calc(var(--i) * 110ms + 200ms);
+	}
+
+	.site-footer.is-visible .footer-col {
+		opacity: 1;
+		transform: none;
 	}
 
 	/* logo.png'de bol şeffaf pay var; object-fit ile wordmark kırpılır. */
 	.footer-logo {
 		display: block;
 		width: 15.5rem;
+		max-width: 100%;
 		height: 3.375rem;
-		margin-bottom: 0.75rem;
 		object-fit: cover;
 		object-position: center;
+		transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.footer-logo-link:hover .footer-logo {
+		transform: scale(1.03);
 	}
 
 	.footer-tagline {
+		max-width: 18rem;
 		margin-top: 1.25rem;
 		font-family: var(--font-body);
 		font-size: 14px;
-		font-weight: 400;
 		line-height: 26px;
 		color: #4c4c4c;
 	}
 
 	.footer-social {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 5px;
-		margin-top: 20px;
+		gap: 8px;
+		margin-top: 1.5rem;
 	}
 
+	/* Hover'da daire içten bakırla dolar. */
 	.footer-social a {
+		position: relative;
 		display: grid;
 		place-items: center;
 		width: 43px;
 		height: 43px;
+		overflow: hidden;
+		isolation: isolate;
 		border: 1px solid #828282;
 		border-radius: 50%;
 		color: #585858;
-		text-decoration: none;
 		transition:
-			border-color var(--transition),
-			color var(--transition);
+			border-color 0.3s ease,
+			color 0.3s ease,
+			transform 0.3s ease;
+	}
+
+	.footer-social a::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: 50%;
+		background: var(--color-copper);
+		transform: scale(0);
+		transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 	}
 
 	.footer-social a:hover {
 		border-color: var(--color-copper);
-		color: var(--color-copper);
+		color: #ffffff;
+		transform: translateY(-3px);
+	}
+
+	.footer-social a:hover::before {
+		transform: scale(1);
 	}
 
 	.footer-social svg {
@@ -152,36 +240,16 @@ const corporateLinks = [
 	}
 
 	.footer-heading {
-		margin: 0 0 1.75rem;
+		margin: 0 0 1.5rem;
 		font-family: var(--font-heading);
-		font-size: 26px;
+		font-size: 22px;
 		font-weight: 700;
 		line-height: 1.1;
 		text-transform: uppercase;
-		color: #4c4c4c;
+		color: #3a3a3a;
 	}
 
-	.footer-contact {
-		margin: 0 0 0 19px;
-		padding: 0;
-		font-family: var(--font-body);
-		font-size: 13px;
-		font-weight: 400;
-		line-height: 26px;
-		color: #4c4c4c;
-		list-style: square;
-	}
-
-	.footer-contact a {
-		color: #4c4c4c;
-		text-decoration: none;
-	}
-
-	.footer-contact a:hover {
-		color: var(--color-copper);
-	}
-
-	/* Useful Resources: border-left omurga + her linkte 20px çentik. */
+	/* Omurga + çentik; hover'da çentik bakıra döner ve uzar. */
 	.footer-links {
 		margin: -5px 0 0;
 		padding: 0;
@@ -194,14 +262,14 @@ const corporateLinks = [
 		display: block;
 		padding: 5px 0 5px 30px;
 		font-family: var(--font-nav);
-		font-size: 13px;
-		font-weight: 400;
+		font-size: 12px;
 		line-height: 17px;
-		letter-spacing: normal;
 		text-transform: uppercase;
 		text-decoration: none;
 		color: #696969;
-		-webkit-font-smoothing: auto;
+		transition:
+			color 0.25s ease,
+			padding-left 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
 	}
 
 	.footer-links a::before {
@@ -212,27 +280,101 @@ const corporateLinks = [
 		width: 20px;
 		height: 1px;
 		background: #9c9c9c;
+		transition:
+			width 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+			background-color 0.25s ease;
 	}
 
 	.footer-links a:hover {
+		padding-left: 38px;
 		color: var(--color-copper);
 	}
 
-	.footer-bottom {
-		border-top: 1px solid #cccccc;
+	.footer-links a:hover::before {
+		width: 28px;
+		background: var(--color-copper);
 	}
 
-	.footer-copy {
-		padding: 25px 20px 20px;
+	.footer-contact {
+		display: grid;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-family: var(--font-body);
+		font-size: 13px;
+		line-height: 22px;
+	}
+
+	.footer-contact li {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.footer-contact-label {
+		font-family: var(--font-nav);
+		font-size: 11px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-copper);
+	}
+
+	.footer-contact a {
+		align-self: flex-start;
+		color: #4c4c4c;
+		text-decoration: none;
+		background: linear-gradient(var(--color-copper), var(--color-copper)) left bottom / 0 1px no-repeat;
+		transition:
+			color 0.25s ease,
+			background-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.footer-contact a:hover {
+		color: var(--color-copper);
+		background-size: 100% 1px;
+	}
+
+	.footer-bottom {
+		border-top: 1px solid #d6d6d6;
+	}
+
+	.footer-bottom-inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem 2rem;
+		padding-block: 1.4rem;
+	}
+
+	.footer-copy,
+	.footer-legal {
 		font-family: var(--font-body);
 		font-size: 12px;
 		line-height: 20px;
-		letter-spacing: 1px;
-		color: #4c4c4c;
-		text-align: center;
+		letter-spacing: 0.5px;
+		color: #6b6b6b;
 	}
 
-	@media (max-width: 52rem) {
+	.footer-legal {
+		text-decoration: none;
+		transition: color var(--transition);
+	}
+
+	.footer-legal:hover {
+		color: var(--color-copper);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.site-footer.is-armed .footer-col,
+		.footer-rule {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+	}
+
+	@media (max-width: 60rem) {
 		.footer-inner {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
@@ -241,6 +383,12 @@ const corporateLinks = [
 	@media (max-width: 34rem) {
 		.footer-inner {
 			grid-template-columns: 1fr;
+			gap: 2.25rem;
+		}
+
+		.footer-bottom-inner {
+			flex-direction: column;
+			align-items: flex-start;
 		}
 	}
 </style>

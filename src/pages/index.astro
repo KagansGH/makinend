@@ -168,7 +168,7 @@ const sectors = [
 	<!-- Kurumsal özet -->
 	<section class="about">
 		<div class="container about-grid">
-			<div class="about-visual" data-reveal="wipe">
+			<div class="about-visual" data-reveal="left">
 				<div class="about-accent" aria-hidden="true"></div>
 				<figure class="about-main">
 					<img
@@ -709,10 +709,11 @@ const sectors = [
 		align-items: center;
 	}
 
-	/* Aksan çerçevesi wipe maskesinin içinde kalsın diye üst ve sol pay bırakılır. */
+	/* Görsel, metin kolonunun tüm yüksekliğini doldurur; solda boşluk kalmaz. */
 	.about-visual {
 		position: relative;
-		padding: 1.5rem 12% 14% 1.5rem;
+		align-self: stretch;
+		min-height: 34rem;
 	}
 
 	.about-accent {
@@ -725,9 +726,9 @@ const sectors = [
 	}
 
 	.about-main {
-		position: relative;
+		position: absolute;
+		inset: 1.5rem 12% 14% 1.5rem;
 		margin: 0;
-		aspect-ratio: 5 / 4;
 		overflow: hidden;
 		background: var(--color-charcoal-panel);
 	}
@@ -1596,6 +1597,14 @@ const sectors = [
 
 		.card-dark .card-body {
 			display: flex;
+		}
+
+		.about-visual {
+			min-height: 22rem;
+		}
+
+		.about-badge {
+			padding: 0.9rem 1.1rem;
 		}
 
 		.card-dark-stats {
