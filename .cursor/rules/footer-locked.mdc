@@ -1,0 +1,15 @@
+---
+description: Footer is locked. Do not change it unless the user explicitly asks.
+alwaysApply: true
+---
+
+# Footer kilitli
+
+`src/components/Footer.astro` ve ona bağlı footer chrome’u (üç kolon, logo, slogan, LinkedIn / Instagram / YouTube daireleri, İletişim, Kurumsal rayı, copyright çizgisi) **onaylı ve sabittir**.
+
+- Kullanıcı açıkça “footer’ı değiştir / şunu düzelt” demedikçe Footer’a, footer stillerine ve `site.ts` içindeki `contact` / `tagline` / `logo` / `socials` yapısına dokunma.
+- Başka bir sayfa veya bileşen işlerken footer’ı “düzeltme”, hizalama veya görsel tutarlılık bahanesiyle değiştirme.
+- Kurumsal link listesi ileride ürün ağacından site haritasına dönebilir; bunu footer yüzünden yeniden tasarlama — yalnızca link verisini genişlet.
+- Sosyal URL değişecekse yalnızca `site.socials` href’ini güncelle; ikon, daire ve yerleşime dokunma.
+- Footer’dan önce boş bant (`pre-footer`) ekleme. Header kilitli; footer işi header’a sıçramasın.
+- Şüphe varsa footer’ı olduğu gibi bırak, sor.

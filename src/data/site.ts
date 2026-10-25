@@ -15,6 +15,23 @@ export const site = {
 		{ code: "tr", label: "TR" },
 		{ code: "en", label: "EN" },
 	],
+	socials: [
+		{
+			id: "linkedin",
+			label: "LinkedIn",
+			href: "https://www.linkedin.com/company/makinend",
+		},
+		{
+			id: "instagram",
+			label: "Instagram",
+			href: "https://www.instagram.com/makinend",
+		},
+		{
+			id: "youtube",
+			label: "YouTube",
+			href: "https://www.youtube.com/@makinend",
+		},
+	],
 } as const;
 
 /**
