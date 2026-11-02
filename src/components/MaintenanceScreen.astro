@@ -1,0 +1,166 @@
+---
+import { site } from "../data/site";
+
+const year = new Date().getFullYear();
+---
+
+<section class="maint" aria-labelledby="maint-title">
+	<div class="maint-bg" aria-hidden="true">
+		<img
+			src="/images/home/hero-roll-form.webp"
+			srcset="/images/home/hero-roll-form-1200.webp 1200w, /images/home/hero-roll-form.webp 2400w"
+			sizes="100vw"
+			alt=""
+			width="2400"
+			height="1350"
+			decoding="async"
+		/>
+	</div>
+	<div class="maint-shade" aria-hidden="true"></div>
+
+	<div class="container maint-inner">
+		<img src={site.logo} alt={site.name} class="maint-logo" width="392" height="80" />
+
+		<span class="maint-eyebrow">
+			<span class="maint-eyebrow-rule" aria-hidden="true"></span>
+			Yakında
+		</span>
+
+		<h1 id="maint-title" class="maint-title">Sitemiz yapım aşamasında</h1>
+
+		<p class="maint-text">
+			Yeni web sitemiz üzerinde çalışıyoruz. Ürünler, projeler ve hizmetlerimiz
+			kısa süre içinde burada olacak. Bu süreçte teklif ve görüşme için bize
+			ulaşabilirsiniz.
+		</p>
+
+		<div class="maint-actions">
+			<a href={site.contact.phoneHref} class="btn btn-primary">{site.contact.phone}</a>
+			<a href={`mailto:${site.contact.email}`} class="btn btn-ghost">{site.contact.email}</a>
+		</div>
+
+		<p class="maint-address">{site.contact.addressLines.join(", ")}</p>
+		<p class="maint-copy">&copy; {year} {site.name}. Tüm hakları saklıdır.</p>
+	</div>
+</section>
+
+<style>
+	.maint {
+		position: relative;
+		display: flex;
+		align-items: center;
+		min-height: 100svh;
+		padding-block: clamp(3rem, 8vw, 6rem);
+		overflow: hidden;
+		background: var(--color-charcoal-deep);
+		color: var(--color-text-inverse);
+		isolation: isolate;
+	}
+
+	.maint-bg,
+	.maint-shade {
+		position: absolute;
+		inset: 0;
+	}
+
+	.maint-bg {
+		z-index: -2;
+	}
+
+	.maint-bg img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: 60% 50%;
+		filter: saturate(0.78) contrast(1.04);
+	}
+
+	.maint-shade {
+		z-index: -1;
+		background:
+			linear-gradient(90deg, rgba(14, 14, 14, 0.92) 0%, rgba(14, 14, 14, 0.78) 42%, rgba(14, 14, 14, 0.45) 100%),
+			linear-gradient(0deg, rgba(14, 14, 14, 0.7) 0%, rgba(14, 14, 14, 0.15) 55%);
+	}
+
+	.maint-inner {
+		position: relative;
+		max-width: 42rem;
+		margin-inline: auto 0;
+	}
+
+	.maint-logo {
+		display: block;
+		width: min(14rem, 70vw);
+		height: auto;
+	}
+
+	.maint-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.875rem;
+		margin-top: 2.5rem;
+		font-family: var(--font-nav);
+		font-size: 0.75rem;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-copper-bright);
+	}
+
+	.maint-eyebrow-rule {
+		display: block;
+		width: 2.75rem;
+		height: 1px;
+		background: currentColor;
+	}
+
+	.maint-title {
+		margin-top: 1.25rem;
+		font-size: clamp(2.25rem, 5.4vw, 4rem);
+		line-height: 1.05;
+		color: var(--color-text-inverse);
+	}
+
+	.maint-text {
+		max-width: 34rem;
+		margin-top: 1.35rem;
+		font-size: 1.0625rem;
+		line-height: 1.7;
+		color: var(--color-text-inverse-muted);
+	}
+
+	.maint-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-top: 2.25rem;
+	}
+
+	.maint-actions .btn {
+		min-height: 2.375rem;
+		padding: 0.5rem 1.15rem;
+		font-size: 0.8125rem;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	.maint-address {
+		margin-top: 2.25rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.16);
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.maint-copy {
+		margin-top: 1.25rem;
+		font-size: 0.8125rem;
+		color: rgba(255, 255, 255, 0.45);
+	}
+
+	@media (max-width: 40rem) {
+		.maint-actions .btn {
+			flex: 1 1 100%;
+		}
+	}
+</style>

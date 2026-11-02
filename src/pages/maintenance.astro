@@ -1,0 +1,26 @@
+---
+/**
+ * Bakım perdesinin kendi rotası. Asıl sayfalar silinmez;
+ * middleware ziyaretçiyi buraya örter.
+ */
+import BaseHead from "../components/BaseHead.astro";
+import MaintenanceScreen from "../components/MaintenanceScreen.astro";
+
+Astro.response.status = 503;
+Astro.response.headers.set("Retry-After", "86400");
+Astro.response.headers.set("Cache-Control", "no-store");
+---
+
+<!doctype html>
+<html lang="tr">
+	<head>
+		<BaseHead
+			title="Yakında | Makinend"
+			description="Makinend web sitesi yenileniyor. Teklif ve görüşme için bize ulaşın."
+			image="/images/home/hero-roll-form-1200.webp"
+		/>
+	</head>
+	<body class="is-maintenance">
+		<MaintenanceScreen />
+	</body>
+</html>

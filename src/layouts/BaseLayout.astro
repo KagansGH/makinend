@@ -3,6 +3,8 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import ScrollToTop from "../components/ScrollToTop.astro";
+import MaintenanceScreen from "../components/MaintenanceScreen.astro";
+import { maintenanceMode } from "../data/maintenance";
 
 interface Props {
 	title: string;
@@ -11,25 +13,49 @@ interface Props {
 }
 
 const { title, description, image } = Astro.props;
+
+const pageTitle = maintenanceMode ? "Yakında | Makinend" : title;
+const pageDescription = maintenanceMode
+	? "Makinend web sitesi yenileniyor. Teklif ve görüşme için bize ulaşın."
+	: description;
+const pageImage = maintenanceMode ? "/images/home/hero-roll-form-1200.webp" : image;
+
+if (maintenanceMode) {
+	Astro.response.status = 503;
+	Astro.response.headers.set("Retry-After", "86400");
+	Astro.response.headers.set("Cache-Control", "no-store");
+}
 ---
 
 <!doctype html>
 <html lang="tr">
 	<head>
-		<BaseHead title={title} description={description} image={image} />
-		<script is:inline>
-			document.documentElement.classList.add("js-motion");
-		</script>
+		<BaseHead title={pageTitle} description={pageDescription} image={pageImage} />
+		{
+			!maintenanceMode && (
+				<script is:inline>
+					document.documentElement.classList.add("js-motion");
+				</script>
+			)
+		}
 	</head>
-	<body>
-		<Header />
-		<main>
-			<slot />
-		</main>
-		<Footer />
-		<ScrollToTop />
-		<script>
-			import "../scripts/motion";
-		</script>
+	<body class={maintenanceMode ? "is-maintenance" : undefined}>
+		{
+			maintenanceMode ? (
+				<MaintenanceScreen />
+			) : (
+				<>
+					<Header />
+					<main>
+						<slot />
+					</main>
+					<Footer />
+					<ScrollToTop />
+					<script>
+						import "../scripts/motion";
+					</script>
+				</>
+			)
+		}
 	</body>
 </html>

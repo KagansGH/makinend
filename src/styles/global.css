@@ -68,6 +68,11 @@ body {
 	color: var(--color-text);
 }
 
+body.is-maintenance {
+	background: var(--color-charcoal-deep);
+	color: var(--color-text-inverse);
+}
+
 h1,
 h2,
 h3,
