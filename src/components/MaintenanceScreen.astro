@@ -49,6 +49,7 @@ const year = new Date().getFullYear();
 		position: relative;
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		min-height: 100svh;
 		padding-block: clamp(3rem, 8vw, 6rem);
 		overflow: hidden;
@@ -78,14 +79,18 @@ const year = new Date().getFullYear();
 	.maint-shade {
 		z-index: -1;
 		background:
-			linear-gradient(90deg, rgba(14, 14, 14, 0.92) 0%, rgba(14, 14, 14, 0.78) 42%, rgba(14, 14, 14, 0.45) 100%),
-			linear-gradient(0deg, rgba(14, 14, 14, 0.7) 0%, rgba(14, 14, 14, 0.15) 55%);
+			radial-gradient(ellipse at center, rgba(14, 14, 14, 0.55) 0%, rgba(14, 14, 14, 0.78) 70%),
+			rgba(14, 14, 14, 0.35);
 	}
 
 	.maint-inner {
 		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		max-width: 42rem;
-		margin-inline: auto 0;
+		margin-inline: auto;
+		text-align: center;
 	}
 
 	.maint-logo {
@@ -131,6 +136,7 @@ const year = new Date().getFullYear();
 	.maint-actions {
 		display: flex;
 		flex-wrap: wrap;
+		justify-content: center;
 		gap: 1rem;
 		margin-top: 2.25rem;
 	}
