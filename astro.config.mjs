@@ -7,6 +7,7 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
 	site: "https://makinend.com",
 	trailingSlash: "never",
+	output: "server",
 	integrations: [],
 	adapter: cloudflare({
 		platformProxy: {

@@ -1,10 +1,12 @@
 ---
 /**
- * Bakım perdesinin kendi rotası. Asıl sayfalar silinmez;
- * middleware ziyaretçiyi buraya örter.
+ * Bakım perdesi. Asıl sayfalar silinmez; middleware ziyaretçiyi buraya örter.
+ * /main ile cookie açılınca middleware bu rewrite'ı atlar.
  */
 import BaseHead from "../components/BaseHead.astro";
 import MaintenanceScreen from "../components/MaintenanceScreen.astro";
+
+export const prerender = false;
 
 Astro.response.status = 503;
 Astro.response.headers.set("Retry-After", "86400");
@@ -19,6 +21,7 @@ Astro.response.headers.set("Cache-Control", "no-store");
 			description="Makinend web sitesi yenileniyor. Teklif ve görüşme için bize ulaşın."
 			image="/images/home/hero-roll-form-1200.webp"
 		/>
+		<meta name="robots" content="noindex, nofollow" />
 	</head>
 	<body class="is-maintenance">
 		<MaintenanceScreen />
